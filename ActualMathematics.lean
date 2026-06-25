@@ -34,6 +34,10 @@ import ActualMathematics.Factorization.UnitGroup
 import ActualMathematics.FiniteCertificateTransfer
 import ActualMathematics.FormalSystem
 import ActualMathematics.GenerableReal
+import ActualMathematics.Grow.IntegerDivisibility
+import ActualMathematics.Grow.RatioOrbitArchimedean
+import ActualMathematics.Grow.RatioOrbitDenseMediant
+import ActualMathematics.Grow.RatioOrbitDensity
 import ActualMathematics.Grow.RatioOrbitLeAddBoth
 import ActualMathematics.Grow.RatioOrbitLeReflTotal
 import ActualMathematics.Grow.RatioOrbitLeTransAntisymm
