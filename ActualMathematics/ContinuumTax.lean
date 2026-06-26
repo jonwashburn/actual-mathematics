@@ -1,5 +1,5 @@
 /-
-  ActualMathematics/ContinuumTax.lean
+  PrimitiveRecognitionCalculus/ContinuumTax.lean
 
   THE CONTINUUM TAX: renormalization as interest on the continuum purchase.
 

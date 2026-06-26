@@ -1,3 +1,9 @@
+/-
+  ActualMathematics: the forced-mathematics framework.
+  distinction -> N -> Z -> Q -> constructive reals, factorization,
+  the recognition cost (law_of_logic_forces_jcost), and the
+  forced/posited demarcation. Choice-free where tagged.
+-/
 import ActualMathematics.AllDimensionalCubicalBoundary
 import ActualMathematics.Basic
 import ActualMathematics.CertifiedAnalyticProtocols
@@ -5,9 +11,9 @@ import ActualMathematics.CertifiedAnalyticTransformers
 import ActualMathematics.CompletionConservativity
 import ActualMathematics.Constants
 import ActualMathematics.ContinuumTax
-import ActualMathematics.Cost
 import ActualMathematics.Cost.AczelClass
 import ActualMathematics.Cost.FunctionalEquation
+import ActualMathematics.Cost
 import ActualMathematics.CubicalChainComplex
 import ActualMathematics.DeltaAmplitude
 import ActualMathematics.DeltaForced
@@ -18,7 +24,6 @@ import ActualMathematics.DeltaReal
 import ActualMathematics.DeltaRealCalibration
 import ActualMathematics.FRSCarrier
 import ActualMathematics.FRSComplexAmplitude
-import ActualMathematics.Factorization
 import ActualMathematics.Factorization.ChartTransition
 import ActualMathematics.Factorization.CoordinateUniqueness
 import ActualMathematics.Factorization.EvenPeriodGap
@@ -34,9 +39,11 @@ import ActualMathematics.Factorization.RecognitionLowerBound
 import ActualMathematics.Factorization.ResidueOrbit
 import ActualMathematics.Factorization.SubstrateDichotomy
 import ActualMathematics.Factorization.UnitGroup
+import ActualMathematics.Factorization
 import ActualMathematics.FiniteCertificateTransfer
 import ActualMathematics.FormalSystem
 import ActualMathematics.GenerableReal
+import ActualMathematics.Grow.ForcedTrichotomy
 import ActualMathematics.Grow.IntegerDivisibility
 import ActualMathematics.Grow.RatioOrbitArchimedean
 import ActualMathematics.Grow.RatioOrbitDenseMediant
@@ -116,8 +123,3 @@ import ActualMathematics.TraceLogic
 import ActualMathematics.UniversalFoundation
 import ActualMathematics.ValidComparison
 import ActualMathematics.ValidComparisonExamples
-
-/-! # Actual Mathematics
-
-Mathematics forced by the act of distinction (the delta / Primitive
-Recognition Calculus framework), formalized in Lean 4 over Mathlib. -/

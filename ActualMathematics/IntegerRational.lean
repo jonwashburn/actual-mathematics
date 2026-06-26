@@ -66,36 +66,19 @@ theorem leq_eq_true_iff (a b : DistinctionNat) :
   induction a generalizing b with
   | zero =>
       cases b with
-      | zero =>
-        show true = true ↔ 0 ≤ 0
-        constructor
-        · intro _; omega
-        · intro _; rfl
-      | succ b =>
-        show true = true ↔ 0 ≤ b.toNat + 1
-        constructor
-        · intro _; omega
-        · intro _; rfl
+      | zero => simp [leq]
+      | succ b => simp [leq]
   | succ a ih =>
       cases b with
-      | zero =>
-        show false = true ↔ a.toNat + 1 ≤ 0
-        constructor
-        · intro h; exact absurd h (by decide)
-        · intro h; omega
+      | zero => simp [leq]
       | succ b =>
-        show leq a b = true ↔ a.toNat + 1 ≤ b.toNat + 1
-        constructor
-        · intro h; have := (ih b).mp h; omega
-        · intro h; exact (ih b).mpr (by omega)
+          simp [leq, ih]
 
 /-- Internal Boolean order is false exactly when verifier order is reversed. -/
 theorem leq_eq_false_iff (a b : DistinctionNat) :
     leq a b = false ↔ b.toNat < a.toNat := by
   rw [← Bool.not_eq_true, leq_eq_true_iff]
-  constructor
-  · intro h; omega
-  · intro h; omega
+  omega
 
 /-- Verifier display of internal absolute difference. -/
 theorem toNat_absDiff (a b : DistinctionNat) :
@@ -357,16 +340,12 @@ theorem nonnegFlag_eq_true_iff (z : SignedOrbit) :
     z.nonnegFlag = true ↔ 0 ≤ z.toInt := by
   unfold nonnegFlag SignedOrbit.toInt
   rw [DistinctionNat.leq_eq_true_iff]
-  constructor
-  · intro h; omega
-  · intro h; omega
+  omega
 
 theorem nonnegFlag_eq_false_iff (z : SignedOrbit) :
     z.nonnegFlag = false ↔ z.toInt < 0 := by
   rw [← Bool.not_eq_true, nonnegFlag_eq_true_iff]
-  constructor
-  · intro h; omega
-  · intro h; omega
+  omega
 
 /-- Internal nonnegativity agrees with the verifier integer display. -/
 theorem nonneg_iff_toInt_nonneg (z : SignedOrbit) :
@@ -391,20 +370,20 @@ theorem nonnegFlag_eq_true_iff_nonneg (z : SignedOrbit) :
 theorem negativeFlag_eq_true_iff_toInt_neg (z : SignedOrbit) :
     z.negativeFlag = true ↔ z.toInt < 0 := by
   unfold negativeFlag
-  cases hnn : z.nonnegFlag with
-  | false =>
-    constructor
-    · intro _
-      exact (nonnegFlag_eq_false_iff z).mp hnn
-    · intro _
-      rfl
-  | true =>
-    rw [nonnegFlag_eq_true_iff] at hnn
-    constructor
-    · intro h
-      exact absurd h (by decide)
-    · intro h
-      omega
+  by_cases h : z.nonnegFlag = true
+  · rw [h]
+    simp
+    rw [nonnegFlag_eq_true_iff] at h
+    omega
+  · have hf : z.nonnegFlag = false := by
+      cases hflag : z.nonnegFlag with
+      | false => rfl
+      | true =>
+          exfalso
+          exact h hflag
+    rw [hf]
+    simp
+    exact (nonnegFlag_eq_false_iff z).mp hf
 
 /-- Verifier display of internal absolute value. -/
 theorem abs_toNat (z : SignedOrbit) :
@@ -442,9 +421,7 @@ theorem le_iff_toInt_le (a b : SignedOrbit) :
     le a b ↔ a.toInt ≤ b.toInt := by
   unfold le
   rw [nonneg_iff_toInt_nonneg, SignedOrbit.sub_toInt]
-  constructor
-  · intro h; omega
-  · intro h; omega
+  constructor <;> intro h <;> omega
 
 theorem lt_iff_toInt_lt (a b : SignedOrbit) :
     lt a b ↔ a.toInt < b.toInt := by
@@ -672,17 +649,12 @@ theorem mul_one (a : PRCInt) : mul a one = a := by
   simp
 
 theorem zero_mul (a : PRCInt) : mul zero a = zero := by
-  refine Quot.induction_on a (fun a => ?_)
-  apply Quot.sound
-  show SignedOrbit.balanced _ _
-  rw [SignedOrbit.balanced_iff_toInt_eq, SignedOrbit.mul_toInt]
-  have hz : SignedOrbit.zero.toInt = 0 := rfl
-  rw [hz, Int.zero_mul]
+  apply toInt_injective
+  simp
 
 theorem mul_zero (a : PRCInt) : mul a zero = zero := by
-  refine Quot.induction_on a ?_
-  intro a
-  rfl
+  apply toInt_injective
+  simp
 
 theorem left_distrib (a b c : PRCInt) :
     mul a (add b c) = add (mul a b) (mul a c) := by

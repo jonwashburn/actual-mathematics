@@ -21,7 +21,8 @@
   kill the Millennium targets whose witness sets are countable (algebraic
   cycles and rational Hodge classes are both countable). For those, cardinality
   gives no obstruction and the genuine obstruction is finer and geometric (for
-  Hodge, the diffuse zero-Lelong residual). That separation
+  Hodge, the diffuse zero-Lelong residual; see
+  `IndisputableMonolith.Mathematics.HodgeDiffuseLocalization`). That separation
   is itself a result: it tells you exactly when the doctrine bites by counting
   and when it must descend to structure.
 

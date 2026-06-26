@@ -224,10 +224,9 @@ theorem scaleByNat_congr_of_balanced {z w : SignedOrbit}
 theorem scaleByNat_balanced_zero_of_balanced_zero {z : SignedOrbit}
     (h : SignedOrbit.balanced z SignedOrbit.zero) (d : DistinctionNat) :
     SignedOrbit.balanced (z.scaleByNat d) SignedOrbit.zero := by
-  rw [SignedOrbit.balanced_iff_toInt_eq] at h ⊢
-  rw [SignedOrbit.zero_toInt] at h
+  rw [SignedOrbit.balanced_iff_toInt_eq] at *
   rw [SignedOrbit.scaleByNat_toInt, SignedOrbit.zero_toInt, h]
-  ring
+  simp [SignedOrbit.zero_toInt]
 
 theorem mul_ofOrbit_balanced_scaleByNat
     (z : SignedOrbit) (d : DistinctionNat) :
@@ -262,11 +261,9 @@ theorem mul_balanced_zero_iff
     SignedOrbit.balanced_iff_toInt_eq, SignedOrbit.zero_toInt]
   constructor
   · intro h
-    have hn : z.toInt.natAbs * w.toInt.natAbs = 0 := by
-      rw [← Int.natAbs_mul, h]; rfl
-    rcases Nat.mul_eq_zero.mp hn with h1 | h2
-    · exact Or.inl (Int.natAbs_eq_zero.mp h1)
-    · exact Or.inr (Int.natAbs_eq_zero.mp h2)
+    rcases mul_eq_zero.mp h with hz | hw
+    · exact Or.inl hz
+    · exact Or.inr hw
   · intro h
     rcases h with hz | hw
     · rw [hz]
@@ -279,21 +276,18 @@ theorem mul_not_balanced_zero_iff
     ¬ SignedOrbit.balanced (SignedOrbit.mul z w) SignedOrbit.zero ↔
       ¬ SignedOrbit.balanced z SignedOrbit.zero ∧
         ¬ SignedOrbit.balanced w SignedOrbit.zero := by
-  rw [SignedOrbit.balanced_iff_toInt_eq, SignedOrbit.balanced_iff_toInt_eq,
-      SignedOrbit.balanced_iff_toInt_eq, SignedOrbit.mul_toInt]
-  have hz0 : SignedOrbit.zero.toInt = 0 := rfl
-  rw [hz0]
+  rw [SignedOrbit.mul_balanced_zero_iff]
   constructor
   · intro h
-    refine ⟨?_, ?_⟩
+    constructor
     · intro hz
-      exact h (by rw [hz]; ring)
+      exact h (Or.inl hz)
     · intro hw
-      exact h (by rw [hw]; ring)
-  · intro h hprod
-    apply h.2
-    apply Int.eq_of_mul_eq_mul_left h.1
-    linear_combination hprod
+      exact h (Or.inr hw)
+  · intro h hzprod
+    rcases hzprod with hz | hw
+    · exact h.1 hz
+    · exact h.2 hw
 
 theorem balanced_mul_left_iff_of_not_balanced_zero
     (a z w : SignedOrbit)
@@ -309,7 +303,7 @@ theorem balanced_mul_left_iff_of_not_balanced_zero
     SignedOrbit.mul_toInt, SignedOrbit.mul_toInt]
   constructor
   · intro h
-    exact Int.eq_of_mul_eq_mul_left haInt h
+    exact mul_left_cancel₀ haInt h
   · intro h
     rw [h]
 
@@ -327,7 +321,7 @@ theorem balanced_mul_right_iff_of_not_balanced_zero
     SignedOrbit.mul_toInt, SignedOrbit.mul_toInt]
   constructor
   · intro h
-    exact Int.eq_of_mul_eq_mul_right haInt h
+    exact mul_right_cancel₀ haInt h
   · intro h
     rw [h]
 
@@ -347,11 +341,7 @@ theorem le_mul_left_iff_of_nonnegFlag_of_not_balanced_zero
   have hapos : 0 < a.toInt := by omega
   rw [SignedOrbit.le_iff_toInt_le, SignedOrbit.le_iff_toInt_le,
     SignedOrbit.mul_toInt, SignedOrbit.mul_toInt]
-  constructor
-  · intro h
-    exact Int.le_of_mul_le_mul_left h hapos
-  · intro h
-    exact Int.mul_le_mul_of_nonneg_left h hanonnegInt
+  constructor <;> intro h <;> nlinarith
 
 theorem lt_mul_left_iff_of_nonnegFlag_of_not_balanced_zero
     (a z w : SignedOrbit)
@@ -369,11 +359,7 @@ theorem lt_mul_left_iff_of_nonnegFlag_of_not_balanced_zero
   have hapos : 0 < a.toInt := by omega
   rw [SignedOrbit.lt_iff_toInt_lt, SignedOrbit.lt_iff_toInt_lt,
     SignedOrbit.mul_toInt, SignedOrbit.mul_toInt]
-  constructor
-  · intro h
-    exact Int.lt_of_mul_lt_mul_left h hanonnegInt
-  · intro h
-    exact Int.mul_lt_mul_of_pos_left h hapos
+  constructor <;> intro h <;> nlinarith
 
 theorem le_mul_right_iff_of_nonnegFlag_of_not_balanced_zero
     (a z w : SignedOrbit)
@@ -391,23 +377,7 @@ theorem le_mul_right_iff_of_nonnegFlag_of_not_balanced_zero
   have hapos : 0 < a.toInt := by omega
   rw [SignedOrbit.le_iff_toInt_le, SignedOrbit.le_iff_toInt_le,
     SignedOrbit.mul_toInt, SignedOrbit.mul_toInt]
-  constructor
-  · intro h
-    by_contra hcon
-    have hlt : w.toInt < z.toInt := by omega
-    have hpos : 0 < (z.toInt - w.toInt) * a.toInt :=
-      Int.mul_pos (by omega) hapos
-    have key : (z.toInt - w.toInt) * a.toInt
-        = z.toInt * a.toInt - w.toInt * a.toInt := by ring
-    rw [key] at hpos
-    omega
-  · intro h
-    have hnn : 0 ≤ (w.toInt - z.toInt) * a.toInt :=
-      Int.mul_nonneg (by omega) (by omega)
-    have key : (w.toInt - z.toInt) * a.toInt
-        = w.toInt * a.toInt - z.toInt * a.toInt := by ring
-    rw [key] at hnn
-    omega
+  constructor <;> intro h <;> nlinarith
 
 theorem lt_mul_right_iff_of_nonnegFlag_of_not_balanced_zero
     (a z w : SignedOrbit)
@@ -425,26 +395,7 @@ theorem lt_mul_right_iff_of_nonnegFlag_of_not_balanced_zero
   have hapos : 0 < a.toInt := by omega
   rw [SignedOrbit.lt_iff_toInt_lt, SignedOrbit.lt_iff_toInt_lt,
     SignedOrbit.mul_toInt, SignedOrbit.mul_toInt]
-  constructor
-  · intro h
-    have htri : w.toInt < z.toInt ∨ w.toInt = z.toInt ∨ z.toInt < w.toInt := by omega
-    rcases htri with hlt | heq | hlt
-    · exfalso
-      have hpos : 0 < (z.toInt - w.toInt) * a.toInt := Int.mul_pos (by omega) hapos
-      have key : (z.toInt - w.toInt) * a.toInt
-          = z.toInt * a.toInt - w.toInt * a.toInt := by ring
-      rw [key] at hpos
-      omega
-    · exfalso
-      rw [heq] at h
-      omega
-    · exact hlt
-  · intro h
-    have hpos : 0 < (w.toInt - z.toInt) * a.toInt := Int.mul_pos (by omega) hapos
-    have key : (w.toInt - z.toInt) * a.toInt
-        = w.toInt * a.toInt - z.toInt * a.toInt := by ring
-    rw [key] at hpos
-    omega
+  constructor <;> intro h <;> nlinarith
 
 theorem le_mul_left_iff_of_negativeFlag
     (a z w : SignedOrbit)
@@ -455,26 +406,7 @@ theorem le_mul_left_iff_of_negativeFlag
     (SignedOrbit.negativeFlag_eq_true_iff_toInt_neg a).mp haneg
   rw [SignedOrbit.le_iff_toInt_le, SignedOrbit.le_iff_toInt_le,
     SignedOrbit.mul_toInt, SignedOrbit.mul_toInt]
-  set A := a.toInt with hA
-  set Z := z.toInt with hZ
-  set W := w.toInt with hW
-  constructor
-  · intro h
-    rcases (by omega : Z < W ∨ W ≤ Z) with h1 | h1
-    · have hneg : (0:ℤ) < -A := by omega
-      have hpos : (0:ℤ) < W - Z := by omega
-      have hmul : (0:ℤ) < (-A) * (W - Z) := Int.mul_pos hneg hpos
-      have key : (-A) * (W - Z) = A * Z - A * W := by ring
-      rw [key] at hmul
-      omega
-    · exact h1
-  · intro h
-    have hnneg : (0:ℤ) ≤ -A := by omega
-    have hnn : (0:ℤ) ≤ Z - W := by omega
-    have hmul : (0:ℤ) ≤ (-A) * (Z - W) := Int.mul_nonneg hnneg hnn
-    have key : (-A) * (Z - W) = A * W - A * Z := by ring
-    rw [key] at hmul
-    omega
+  constructor <;> intro h <;> nlinarith
 
 theorem lt_mul_left_iff_of_negativeFlag
     (a z w : SignedOrbit)
@@ -485,26 +417,7 @@ theorem lt_mul_left_iff_of_negativeFlag
     (SignedOrbit.negativeFlag_eq_true_iff_toInt_neg a).mp haneg
   rw [SignedOrbit.lt_iff_toInt_lt, SignedOrbit.lt_iff_toInt_lt,
     SignedOrbit.mul_toInt, SignedOrbit.mul_toInt]
-  set A := a.toInt
-  set X := z.toInt
-  set Y := w.toInt
-  constructor
-  · intro h
-    -- h : A * X < A * Y ; goal : Y < X
-    have hp : A * X - A * Y < 0 := by omega
-    rcases Int.lt_or_le Y X with hlt | hge
-    · exact hlt
-    · -- hge : X ≤ Y ; derive a contradiction
-      have h1 : 0 ≤ (-A) * (Y - X) := Int.mul_nonneg (by omega) (by omega)
-      have h2 : (-A) * (Y - X) = A * X - A * Y := by ring
-      rw [h2] at h1
-      omega
-  · intro h
-    -- h : Y < X ; goal : A * X < A * Y
-    have h1 : 0 < (-A) * (X - Y) := Int.mul_pos (by omega) (by omega)
-    have h2 : (-A) * (X - Y) = A * Y - A * X := by ring
-    rw [h2] at h1
-    omega
+  constructor <;> intro h <;> nlinarith
 
 theorem le_mul_right_iff_of_negativeFlag
     (a z w : SignedOrbit)
@@ -515,27 +428,7 @@ theorem le_mul_right_iff_of_negativeFlag
     (SignedOrbit.negativeFlag_eq_true_iff_toInt_neg a).mp haneg
   rw [SignedOrbit.le_iff_toInt_le, SignedOrbit.le_iff_toInt_le,
     SignedOrbit.mul_toInt, SignedOrbit.mul_toInt]
-  constructor
-  · intro h
-    -- h : z.toInt * a.toInt ≤ w.toInt * a.toInt ; goal : w.toInt ≤ z.toInt
-    rcases (by omega : w.toInt ≤ z.toInt ∨ z.toInt < w.toInt) with hle | hlt
-    · exact hle
-    · have h1 : 0 < w.toInt - z.toInt := by omega
-      have h2 : 0 < -a.toInt := by omega
-      have h3 : 0 < (w.toInt - z.toInt) * (-a.toInt) := Int.mul_pos h1 h2
-      have h4 : (w.toInt - z.toInt) * (-a.toInt)
-          = z.toInt * a.toInt - w.toInt * a.toInt := by ring
-      rw [h4] at h3
-      omega
-  · intro h
-    -- h : w.toInt ≤ z.toInt ; goal : z.toInt * a.toInt ≤ w.toInt * a.toInt
-    have h1 : 0 ≤ z.toInt - w.toInt := by omega
-    have h2 : 0 ≤ -a.toInt := by omega
-    have h3 : 0 ≤ (z.toInt - w.toInt) * (-a.toInt) := Int.mul_nonneg h1 h2
-    have h4 : (z.toInt - w.toInt) * (-a.toInt)
-        = w.toInt * a.toInt - z.toInt * a.toInt := by ring
-    rw [h4] at h3
-    omega
+  constructor <;> intro h <;> nlinarith
 
 theorem lt_mul_right_iff_of_negativeFlag
     (a z w : SignedOrbit)
@@ -546,24 +439,7 @@ theorem lt_mul_right_iff_of_negativeFlag
     (SignedOrbit.negativeFlag_eq_true_iff_toInt_neg a).mp haneg
   rw [SignedOrbit.lt_iff_toInt_lt, SignedOrbit.lt_iff_toInt_lt,
     SignedOrbit.mul_toInt, SignedOrbit.mul_toInt]
-  -- goal: z.toInt * a.toInt < w.toInt * a.toInt ↔ w.toInt < z.toInt
-  have key : ∀ p q : ℤ, p < q → q * a.toInt < p * a.toInt := by
-    intro p q hpq
-    have h1 : 0 < q - p := by omega
-    have h2 : 0 < -a.toInt := by omega
-    have h3 : 0 < (q - p) * (-a.toInt) := Int.mul_pos h1 h2
-    have e : (q - p) * (-a.toInt) = p * a.toInt - q * a.toInt := by ring
-    omega
-  constructor
-  · intro h
-    have htri : w.toInt < z.toInt ∨ w.toInt = z.toInt ∨ z.toInt < w.toInt := by omega
-    rcases htri with hlt | heq | hgt
-    · exact hlt
-    · rw [heq] at h; omega
-    · have hk := key z.toInt w.toInt hgt
-      omega
-  · intro h
-    exact key w.toInt z.toInt h
+  constructor <;> intro h <;> nlinarith
 
 theorem abs_mul_eq_zero_iff
     (z w : SignedOrbit) :
@@ -574,15 +450,15 @@ theorem abs_mul_eq_zero_iff
     SignedOrbit.abs_eq_zero_iff_toInt_eq_zero]
   constructor
   · intro h
-    have hn : z.toInt.natAbs * w.toInt.natAbs = 0 := by
-      rw [← Int.natAbs_mul, h, Int.natAbs_zero]
-    rcases Nat.mul_eq_zero.mp hn with h1 | h2
-    · exact Or.inl (Int.natAbs_eq_zero.mp h1)
-    · exact Or.inr (Int.natAbs_eq_zero.mp h2)
+    rcases mul_eq_zero.mp h with hz | hw
+    · exact Or.inl hz
+    · exact Or.inr hw
   · intro h
     rcases h with hz | hw
-    · rw [hz]; ring
-    · rw [hw]; ring
+    · rw [hz]
+      ring
+    · rw [hw]
+      ring
 
 theorem abs_mul_ne_zero_iff
     (z w : SignedOrbit) :
@@ -611,11 +487,9 @@ theorem abs_mul_eq_zero_iff_balanced_zero
     SignedOrbit.zero_toInt]
   constructor
   · intro h
-    have hnat : z.toInt.natAbs * w.toInt.natAbs = 0 := by
-      rw [← Int.natAbs_mul, h, Int.natAbs_zero]
-    rcases Nat.mul_eq_zero.mp hnat with hz | hw
-    · exact Or.inl (Int.natAbs_eq_zero.mp hz)
-    · exact Or.inr (Int.natAbs_eq_zero.mp hw)
+    rcases mul_eq_zero.mp h with hz | hw
+    · exact Or.inl hz
+    · exact Or.inr hw
   · intro h
     rcases h with hz | hw
     · rw [hz]
@@ -669,25 +543,23 @@ theorem mul_ofOrbit_right_balanced_zero_iff
         (SignedOrbit.mul z (SignedOrbit.ofOrbit d)) SignedOrbit.zero ↔
       SignedOrbit.balanced z SignedOrbit.zero ∨ d = DistinctionNat.zero := by
   rw [SignedOrbit.balanced_iff_toInt_eq, SignedOrbit.mul_toInt,
-    SignedOrbit.ofOrbit_toInt, SignedOrbit.zero_toInt,
-    SignedOrbit.balanced_iff_toInt_eq, SignedOrbit.zero_toInt]
+    SignedOrbit.ofOrbit_toInt, SignedOrbit.zero_toInt]
   constructor
   · intro h
-    rcases Nat.eq_zero_or_pos d.toNat with hd | hd
+    rcases mul_eq_zero.mp h with hz | hd
+    · left
+      rw [SignedOrbit.balanced_iff_toInt_eq, SignedOrbit.zero_toInt]
+      exact hz
     · right
       apply DistinctionNat.toNat_inj
       rw [DistinctionNat.toNat_zero]
-      exact hd
-    · left
-      have hne : (d.toNat : ℤ) ≠ 0 := by omega
-      have hmul : z.toInt * (d.toNat : ℤ) = 0 * (d.toNat : ℤ) := by
-        linear_combination h
-      exact Int.eq_of_mul_eq_mul_right hne hmul
+      exact_mod_cast hd
   · intro h
     rcases h with hz | hd
-    · rw [hz]; ring
+    · rw [SignedOrbit.balanced_iff_toInt_eq, SignedOrbit.zero_toInt] at hz
+      rw [hz]
+      ring
     · rw [hd, DistinctionNat.toNat_zero]
-      push_cast
       ring
 
 theorem mul_ofOrbit_left_balanced_zero_iff
@@ -699,20 +571,14 @@ theorem mul_ofOrbit_left_balanced_zero_iff
     SignedOrbit.ofOrbit_toInt, SignedOrbit.zero_toInt]
   constructor
   · intro h
-    cases hn : d.toNat with
-    | zero =>
-        right
-        apply DistinctionNat.toNat_inj
-        rw [DistinctionNat.toNat_zero]
-        exact hn
-    | succ n =>
-        left
-        rw [SignedOrbit.balanced_iff_toInt_eq, SignedOrbit.zero_toInt]
-        have ha : (d.toNat : ℤ) ≠ 0 := by
-          intro hc; omega
-        have hb : z.toInt = 0 :=
-          Int.eq_of_mul_eq_mul_left ha (by linear_combination h)
-        exact hb
+    rcases mul_eq_zero.mp h with hd | hz
+    · right
+      apply DistinctionNat.toNat_inj
+      rw [DistinctionNat.toNat_zero]
+      exact_mod_cast hd
+    · left
+      rw [SignedOrbit.balanced_iff_toInt_eq, SignedOrbit.zero_toInt]
+      exact hz
   · intro h
     rcases h with hz | hd
     · rw [SignedOrbit.balanced_iff_toInt_eq, SignedOrbit.zero_toInt] at hz
@@ -770,18 +636,16 @@ theorem nonnegFlag_scaleByNat_of_ne_zero
       SignedOrbit.scaleByNat_toInt]
     have hzneg : z.toInt < 0 :=
       (SignedOrbit.nonnegFlag_eq_false_iff z).mp hz
-    have hk : 0 < (d.toNat : ℤ) := by omega
-    have hpos : 0 < (-z.toInt) * (d.toNat : ℤ) :=
-      Int.mul_pos (by omega) hk
-    have heq : (-z.toInt) * (d.toNat : ℤ) = -(z.toInt * (d.toNat : ℤ)) := by ring
-    rw [heq] at hpos
-    omega
+    have hdpos : 0 < (d.toNat : ℤ) := by
+      have : 0 < d.toNat := Nat.pos_of_ne_zero hdNat
+      exact_mod_cast this
+    nlinarith
   · rw [SignedOrbit.nonnegFlag_eq_true_iff,
       SignedOrbit.scaleByNat_toInt]
     have hznonneg : 0 ≤ z.toInt :=
       (SignedOrbit.nonnegFlag_eq_true_iff z).mp hz
-    have hdnonneg : 0 ≤ (d.toNat : ℤ) := by omega
-    exact Int.mul_nonneg hznonneg hdnonneg
+    have hdnonneg : 0 ≤ (d.toNat : ℤ) := by exact_mod_cast Nat.zero_le d.toNat
+    nlinarith
 
 theorem negativeFlag_scaleByNat_of_ne_zero
     (z : SignedOrbit) (d : DistinctionNat) (hd : d ≠ DistinctionNat.zero) :
@@ -797,22 +661,21 @@ theorem scaleByNat_balanced_zero_iff
     SignedOrbit.zero_toInt]
   constructor
   · intro h
-    rcases Nat.eq_zero_or_pos d.toNat with hd0 | hdpos
+    rcases mul_eq_zero.mp h with hz | hd
+    · left
+      rw [SignedOrbit.balanced_iff_toInt_eq, SignedOrbit.zero_toInt]
+      exact hz
     · right
       apply DistinctionNat.toNat_inj
       rw [DistinctionNat.toNat_zero]
-      exact hd0
-    · left
-      rw [SignedOrbit.balanced_iff_toInt_eq, SignedOrbit.zero_toInt]
-      have hcne : (↑(d.toNat) : ℤ) ≠ 0 := by omega
-      have e : z.toInt * (↑(d.toNat) : ℤ) = 0 * (↑(d.toNat) : ℤ) := by
-        rw [h]; ring
-      exact Int.eq_of_mul_eq_mul_right hcne e
+      exact_mod_cast hd
   · intro h
     rcases h with hz | hd
     · rw [SignedOrbit.balanced_iff_toInt_eq, SignedOrbit.zero_toInt] at hz
-      rw [hz]; ring
-    · rw [hd, DistinctionNat.toNat_zero, Nat.cast_zero]; ring
+      rw [hz]
+      ring
+    · rw [hd, DistinctionNat.toNat_zero]
+      ring
 
 theorem scaleByNat_not_balanced_zero_iff
     (z : SignedOrbit) (d : DistinctionNat) :
@@ -839,19 +702,18 @@ theorem abs_scaleByNat_eq_zero_iff
     SignedOrbit.scaleByNat_toInt, SignedOrbit.abs_eq_zero_iff_toInt_eq_zero]
   constructor
   · intro h
-    rcases Nat.eq_zero_or_pos d.toNat with hd0 | hdpos
+    rcases mul_eq_zero.mp h with hz | hd
+    · exact Or.inl hz
     · right
       apply DistinctionNat.toNat_inj
       rw [DistinctionNat.toNat_zero]
-      exact hd0
-    · left
-      have hn : (d.toNat : ℤ) ≠ 0 := by omega
-      apply Int.eq_of_mul_eq_mul_right hn
-      linear_combination h
+      exact_mod_cast hd
   · intro h
     rcases h with hz | hd
-    · rw [hz]; ring
-    · rw [hd, DistinctionNat.toNat_zero]; ring
+    · rw [hz]
+      ring
+    · rw [hd, DistinctionNat.toNat_zero]
+      ring
 
 theorem abs_scaleByNat_ne_zero_iff
     (z : SignedOrbit) (d : DistinctionNat) :
@@ -878,20 +740,18 @@ theorem abs_mul_ofOrbit_right_eq_zero_iff
     SignedOrbit.ofOrbit_toInt, SignedOrbit.abs_eq_zero_iff_toInt_eq_zero]
   constructor
   · intro h
-    by_cases hn0 : d.toNat = 0
+    rcases mul_eq_zero.mp h with hz | hd
+    · exact Or.inl hz
     · right
       apply DistinctionNat.toNat_inj
       rw [DistinctionNat.toNat_zero]
-      exact hn0
-    · left
-      have hn : (↑(d.toNat) : ℤ) ≠ 0 := by omega
-      have e : z.toInt * (↑(d.toNat) : ℤ) = 0 * (↑(d.toNat) : ℤ) := by
-        linear_combination h
-      exact Int.eq_of_mul_eq_mul_right hn e
+      exact_mod_cast hd
   · intro h
     rcases h with hz | hd
-    · rw [hz]; ring
-    · rw [hd, DistinctionNat.toNat_zero]; ring
+    · rw [hz]
+      ring
+    · rw [hd, DistinctionNat.toNat_zero]
+      ring
 
 theorem abs_mul_ofOrbit_left_eq_zero_iff
     (d : DistinctionNat) (z : SignedOrbit) :
@@ -901,19 +761,17 @@ theorem abs_mul_ofOrbit_left_eq_zero_iff
     SignedOrbit.ofOrbit_toInt, SignedOrbit.abs_eq_zero_iff_toInt_eq_zero]
   constructor
   · intro h
-    rcases Int.mul_eq_zero.mp h with hd | hz
+    rcases mul_eq_zero.mp h with hd | hz
     · right
       apply DistinctionNat.toNat_inj
       rw [DistinctionNat.toNat_zero]
-      omega
+      exact_mod_cast hd
     · exact Or.inl hz
   · intro h
     rcases h with hz | hd
     · rw [hz]
-      push_cast
       ring
     · rw [hd, DistinctionNat.toNat_zero]
-      push_cast
       ring
 
 theorem abs_mul_ofOrbit_right_ne_zero_iff
@@ -955,8 +813,8 @@ theorem le_scaleByNat_of_le {z w : SignedOrbit}
     SignedOrbit.le (z.scaleByNat d) (w.scaleByNat d) := by
   rw [SignedOrbit.le_iff_toInt_le] at h ⊢
   rw [SignedOrbit.scaleByNat_toInt, SignedOrbit.scaleByNat_toInt]
-  have hdnonneg : 0 ≤ (d.toNat : ℤ) := by omega
-  exact Int.mul_le_mul_of_nonneg_right h hdnonneg
+  have hdnonneg : 0 ≤ (d.toNat : ℤ) := by exact_mod_cast Nat.zero_le d.toNat
+  nlinarith
 
 theorem le_scaleByNat_iff_of_ne_zero
     (z w : SignedOrbit) (d : DistinctionNat) (hd : d ≠ DistinctionNat.zero) :
@@ -967,15 +825,12 @@ theorem le_scaleByNat_iff_of_ne_zero
     apply hd
     apply DistinctionNat.toNat_inj
     rw [hzero, DistinctionNat.toNat_zero]
-  have hdpos : 0 < (d.toNat : ℤ) := by omega
-  have hdnn : 0 ≤ (d.toNat : ℤ) := by omega
+  have hdpos : 0 < (d.toNat : ℤ) := by
+    have hNatPos : 0 < d.toNat := Nat.pos_of_ne_zero hdNat
+    exact_mod_cast hNatPos
   rw [SignedOrbit.le_iff_toInt_le, SignedOrbit.le_iff_toInt_le,
     SignedOrbit.scaleByNat_toInt, SignedOrbit.scaleByNat_toInt]
-  constructor
-  · intro h
-    exact Int.le_of_mul_le_mul_right h hdpos
-  · intro h
-    exact Int.mul_le_mul_of_nonneg_right h hdnn
+  constructor <;> intro h <;> nlinarith
 
 theorem lt_scaleByNat_iff_of_ne_zero
     (z w : SignedOrbit) (d : DistinctionNat) (hd : d ≠ DistinctionNat.zero) :
@@ -986,25 +841,12 @@ theorem lt_scaleByNat_iff_of_ne_zero
     apply hd
     apply DistinctionNat.toNat_inj
     rw [hzero, DistinctionNat.toNat_zero]
-  have hc : 0 < (d.toNat : ℤ) := by omega
-  have key : ∀ a b : ℤ, a < b → a * (d.toNat : ℤ) < b * (d.toNat : ℤ) := by
-    intro a b hab
-    have h1 : 0 < b - a := Int.sub_pos.mpr hab
-    have h2 : 0 < (b - a) * (d.toNat : ℤ) := Int.mul_pos h1 hc
-    have h3 : (b - a) * (d.toNat : ℤ) = b * (d.toNat : ℤ) - a * (d.toNat : ℤ) := by ring
-    rw [h3] at h2
-    exact Int.sub_pos.mp h2
+  have hdpos : 0 < (d.toNat : ℤ) := by
+    have hNatPos : 0 < d.toNat := Nat.pos_of_ne_zero hdNat
+    exact_mod_cast hNatPos
   rw [SignedOrbit.lt_iff_toInt_lt, SignedOrbit.lt_iff_toInt_lt,
     SignedOrbit.scaleByNat_toInt, SignedOrbit.scaleByNat_toInt]
-  constructor
-  · intro h
-    rcases (by omega : z.toInt < w.toInt ∨ z.toInt = w.toInt ∨ w.toInt < z.toInt)
-      with hlt | heq | hgt
-    · exact hlt
-    · exfalso; rw [heq] at h; omega
-    · exfalso; have h2 := key w.toInt z.toInt hgt; omega
-  · intro h
-    exact key z.toInt w.toInt h
+  constructor <;> intro h <;> nlinarith
 
 theorem balanced_scaleByNat_iff_of_ne_zero
     (z w : SignedOrbit) (d : DistinctionNat) (hd : d ≠ DistinctionNat.zero) :
@@ -1015,14 +857,12 @@ theorem balanced_scaleByNat_iff_of_ne_zero
     apply hd
     apply DistinctionNat.toNat_inj
     rw [hzero, DistinctionNat.toNat_zero]
-  have hc : (d.toNat : ℤ) ≠ 0 := by omega
+  have hdpos : 0 < (d.toNat : ℤ) := by
+    have hNatPos : 0 < d.toNat := Nat.pos_of_ne_zero hdNat
+    exact_mod_cast hNatPos
   rw [SignedOrbit.balanced_iff_toInt_eq, SignedOrbit.balanced_iff_toInt_eq,
     SignedOrbit.scaleByNat_toInt, SignedOrbit.scaleByNat_toInt]
-  constructor
-  · intro h
-    exact Int.eq_of_mul_eq_mul_right hc h
-  · intro h
-    rw [h]
+  constructor <;> intro h <;> nlinarith
 
 theorem le_congr_left_of_balanced {a a' b : SignedOrbit}
     (ha : SignedOrbit.balanced a a') :
@@ -1232,12 +1072,10 @@ theorem balanced_mul_ofOrbit_right_iff_of_ne_zero
     apply hd
     apply DistinctionNat.toNat_inj
     rw [hzero, DistinctionNat.toNat_zero]
-  have hdNZ : (d.toNat : ℤ) ≠ 0 := by omega
-  constructor
-  · intro h
-    exact Int.eq_of_mul_eq_mul_right hdNZ h
-  · intro h
-    rw [h]
+  have hdpos : 0 < (d.toNat : ℤ) := by
+    have hNatPos : 0 < d.toNat := Nat.pos_of_ne_zero hdNat
+    exact_mod_cast hNatPos
+  constructor <;> intro h <;> nlinarith
 
 theorem cmp_mul_ofOrbit_right_of_ne_zero
     (z w : SignedOrbit) (d : DistinctionNat) (hd : d ≠ DistinctionNat.zero) :
@@ -1285,12 +1123,10 @@ theorem balanced_mul_ofOrbit_left_iff_of_ne_zero
     apply hd
     apply DistinctionNat.toNat_inj
     rw [hzero, DistinctionNat.toNat_zero]
-  have hdne : (d.toNat : ℤ) ≠ 0 := by omega
-  constructor
-  · intro h
-    exact Int.eq_of_mul_eq_mul_left hdne h
-  · intro h
-    rw [h]
+  have hdpos : 0 < (d.toNat : ℤ) := by
+    have hNatPos : 0 < d.toNat := Nat.pos_of_ne_zero hdNat
+    exact_mod_cast hNatPos
+  constructor <;> intro h <;> nlinarith
 
 theorem cmp_mul_ofOrbit_left_of_ne_zero
     (d : DistinctionNat) (z w : SignedOrbit) (hd : d ≠ DistinctionNat.zero) :
@@ -1422,7 +1258,7 @@ theorem nonnegFlag_mul_of_nonnegFlag_of_nonnegFlag
     (SignedOrbit.nonnegFlag_eq_true_iff z).mp hz
   have hwnonneg : 0 ≤ w.toInt :=
     (SignedOrbit.nonnegFlag_eq_true_iff w).mp hw
-  exact Int.mul_nonneg hznonneg hwnonneg
+  nlinarith
 
 theorem nonnegFlag_mul_of_negativeFlag_of_negativeFlag
     (z w : SignedOrbit)
@@ -1433,12 +1269,7 @@ theorem nonnegFlag_mul_of_negativeFlag_of_negativeFlag
     (SignedOrbit.negativeFlag_eq_true_iff_toInt_neg z).mp hz
   have hwneg : w.toInt < 0 :=
     (SignedOrbit.negativeFlag_eq_true_iff_toInt_neg w).mp hw
-  have h1 : (0:ℤ) ≤ -z.toInt := by omega
-  have h2 : (0:ℤ) ≤ -w.toInt := by omega
-  have h3 : (0:ℤ) ≤ (-z.toInt) * (-w.toInt) := Int.mul_nonneg h1 h2
-  have heq : (-z.toInt) * (-w.toInt) = z.toInt * w.toInt := by ring
-  rw [heq] at h3
-  exact h3
+  nlinarith
 
 theorem negativeFlag_mul_of_nonnegFlag_of_not_balanced_zero_of_negativeFlag
     (z w : SignedOrbit)
@@ -1457,11 +1288,7 @@ theorem negativeFlag_mul_of_nonnegFlag_of_not_balanced_zero_of_negativeFlag
   have hzpos : 0 < z.toInt := by omega
   have hwneg : w.toInt < 0 :=
     (SignedOrbit.negativeFlag_eq_true_iff_toInt_neg w).mp hw
-  have h1 : 0 < -w.toInt := by omega
-  have h2 : 0 < z.toInt * (-w.toInt) := Int.mul_pos hzpos h1
-  have h3 : z.toInt * (-w.toInt) = -(z.toInt * w.toInt) := by ring
-  rw [h3] at h2
-  omega
+  nlinarith
 
 theorem negativeFlag_mul_of_negativeFlag_of_nonnegFlag_of_not_balanced_zero
     (z w : SignedOrbit)
@@ -1476,15 +1303,11 @@ theorem negativeFlag_mul_of_negativeFlag_of_nonnegFlag_of_not_balanced_zero
     (SignedOrbit.nonnegFlag_eq_true_iff w).mp hw
   have hwnzInt : w.toInt ≠ 0 := by
     intro hzero
-    apply hwnz
-    rw [SignedOrbit.balanced_iff_toInt_eq, SignedOrbit.zero_toInt]
-    exact hzero
+    exact hwnz (by
+      rw [SignedOrbit.balanced_iff_toInt_eq, SignedOrbit.zero_toInt]
+      exact hzero)
   have hwpos : 0 < w.toInt := by omega
-  have h1 : 0 < -z.toInt := by omega
-  have h2 : 0 < (-z.toInt) * w.toInt := Int.mul_pos h1 hwpos
-  have h3 : (-z.toInt) * w.toInt = -(z.toInt * w.toInt) := by ring
-  rw [h3] at h2
-  omega
+  nlinarith
 
 theorem negativeFlag_mul_iff
     (z w : SignedOrbit) :
@@ -1508,36 +1331,23 @@ theorem negativeFlag_mul_iff
       have hznz : ¬ SignedOrbit.balanced z SignedOrbit.zero := by
         intro hzero
         rw [SignedOrbit.balanced_iff_toInt_eq, SignedOrbit.zero_toInt] at hzero
-        have hzprod : z.toInt * w.toInt = 0 := by rw [hzero]; ring
-        omega
-      have hwNegInt : w.toInt < 0 := by
-        rcases (by omega : w.toInt < 0 ∨ 0 ≤ w.toInt) with h | h
-        · exact h
-        · have := Int.mul_nonneg hzNonnegInt h
-          omega
+        rw [hzero] at hprodInt
+        nlinarith
+      have hwNegInt : w.toInt < 0 := by nlinarith
       have hwneg : w.negativeFlag = true :=
         (SignedOrbit.negativeFlag_eq_true_iff_toInt_neg w).mpr hwNegInt
       exact ⟨hznonneg, hznz, hwneg⟩
     · right
       have hzNegInt : z.toInt < 0 :=
         (SignedOrbit.negativeFlag_eq_true_iff_toInt_neg z).mp hzneg
-      have hwPosInt : 0 < w.toInt := by
-        rcases (by omega : 0 < w.toInt ∨ w.toInt ≤ 0) with h | h
-        · exact h
-        · have hz : 0 ≤ -z.toInt := by omega
-          have hw : 0 ≤ -w.toInt := by omega
-          have hmul := Int.mul_nonneg hz hw
-          have heq : (-z.toInt) * (-w.toInt) = z.toInt * w.toInt := by ring
-          rw [heq] at hmul
-          omega
-      have hwnonnegInt : 0 ≤ w.toInt := by omega
+      have hwPosInt : 0 < w.toInt := by nlinarith
       have hwnonneg : w.nonnegFlag = true :=
-        (SignedOrbit.nonnegFlag_eq_true_iff w).mpr hwnonnegInt
+        (SignedOrbit.nonnegFlag_eq_true_iff w).mpr (le_of_lt hwPosInt)
       have hwnz : ¬ SignedOrbit.balanced w SignedOrbit.zero := by
         intro hzero
         rw [SignedOrbit.balanced_iff_toInt_eq, SignedOrbit.zero_toInt] at hzero
-        have hwprod : z.toInt * w.toInt = 0 := by rw [hzero]; ring
-        omega
+        rw [hzero] at hprodInt
+        nlinarith
       exact ⟨hzneg, hwnonneg, hwnz⟩
   · intro h
     rcases h with hleft | hright
@@ -2290,9 +2100,7 @@ theorem sub_balanced_zero_iff_balanced (a b : SignedOrbit) :
   rw [SignedOrbit.balanced_iff_toInt_eq,
     SignedOrbit.sub_toInt, SignedOrbit.zero_toInt,
     SignedOrbit.balanced_iff_toInt_eq]
-  constructor
-  · intro h; omega
-  · intro h; omega
+  omega
 
 theorem sub_not_balanced_zero_iff_not_balanced (a b : SignedOrbit) :
     ¬ SignedOrbit.balanced (SignedOrbit.sub a b) SignedOrbit.zero ↔
@@ -2304,9 +2112,7 @@ theorem abs_sub_eq_zero_iff_balanced (a b : SignedOrbit) :
       SignedOrbit.balanced a b := by
   rw [SignedOrbit.abs_eq_zero_iff_toInt_eq_zero,
     SignedOrbit.sub_toInt, SignedOrbit.balanced_iff_toInt_eq]
-  constructor
-  · intro h; omega
-  · intro h; omega
+  omega
 
 theorem abs_sub_ne_zero_iff_not_balanced (a b : SignedOrbit) :
     (SignedOrbit.sub a b).abs ≠ DistinctionNat.zero ↔
@@ -2530,27 +2336,21 @@ theorem nonnegFlag_sub_iff_le (a b : SignedOrbit) :
       SignedOrbit.le b a := by
   rw [SignedOrbit.nonnegFlag_eq_true_iff,
     SignedOrbit.sub_toInt, SignedOrbit.le_iff_toInt_le]
-  constructor
-  · intro h; omega
-  · intro h; omega
+  omega
 
 theorem nonnegFlag_sub_eq_false_iff_lt (a b : SignedOrbit) :
     (SignedOrbit.sub a b).nonnegFlag = false ↔
       SignedOrbit.lt a b := by
   rw [SignedOrbit.nonnegFlag_eq_false_iff,
     SignedOrbit.sub_toInt, SignedOrbit.lt_iff_toInt_lt]
-  constructor
-  · intro h; omega
-  · intro h; omega
+  omega
 
 theorem negativeFlag_sub_iff_lt (a b : SignedOrbit) :
     (SignedOrbit.sub a b).negativeFlag = true ↔
       SignedOrbit.lt a b := by
   rw [SignedOrbit.negativeFlag_eq_true_iff_toInt_neg,
     SignedOrbit.sub_toInt, SignedOrbit.lt_iff_toInt_lt]
-  constructor
-  · intro h; omega
-  · intro h; omega
+  omega
 
 theorem negativeFlag_sub_eq_false_iff_le (a b : SignedOrbit) :
     (SignedOrbit.sub a b).negativeFlag = false ↔
@@ -2617,63 +2417,49 @@ theorem balanced_add_left_iff (a b c : SignedOrbit) :
       SignedOrbit.balanced a b := by
   rw [SignedOrbit.balanced_iff_toInt_eq, SignedOrbit.balanced_iff_toInt_eq]
   rw [SignedOrbit.add_toInt, SignedOrbit.add_toInt]
-  constructor
-  · intro h; omega
-  · intro h; omega
+  omega
 
 theorem balanced_add_right_iff (a b c : SignedOrbit) :
     SignedOrbit.balanced (SignedOrbit.add a c) (SignedOrbit.add b c) ↔
       SignedOrbit.balanced a b := by
   rw [SignedOrbit.balanced_iff_toInt_eq, SignedOrbit.balanced_iff_toInt_eq]
   rw [SignedOrbit.add_toInt, SignedOrbit.add_toInt]
-  constructor
-  · intro h; omega
-  · intro h; omega
+  omega
 
 theorem balanced_negate_iff (a b : SignedOrbit) :
     SignedOrbit.balanced (SignedOrbit.negate a) (SignedOrbit.negate b) ↔
       SignedOrbit.balanced a b := by
   rw [SignedOrbit.balanced_iff_toInt_eq, SignedOrbit.balanced_iff_toInt_eq]
   rw [SignedOrbit.negate_toInt, SignedOrbit.negate_toInt]
-  constructor
-  · intro h; omega
-  · intro h; omega
+  omega
 
 theorem le_add_left_iff (a b c : SignedOrbit) :
     SignedOrbit.le (SignedOrbit.add c a) (SignedOrbit.add c b) ↔
       SignedOrbit.le a b := by
   rw [SignedOrbit.le_iff_toInt_le, SignedOrbit.le_iff_toInt_le]
   rw [SignedOrbit.add_toInt, SignedOrbit.add_toInt]
-  constructor
-  · intro h; omega
-  · intro h; omega
+  omega
 
 theorem le_add_right_iff (a b c : SignedOrbit) :
     SignedOrbit.le (SignedOrbit.add a c) (SignedOrbit.add b c) ↔
       SignedOrbit.le a b := by
   rw [SignedOrbit.le_iff_toInt_le, SignedOrbit.le_iff_toInt_le]
   rw [SignedOrbit.add_toInt, SignedOrbit.add_toInt]
-  constructor
-  · intro h; omega
-  · intro h; omega
+  omega
 
 theorem lt_add_left_iff (a b c : SignedOrbit) :
     SignedOrbit.lt (SignedOrbit.add c a) (SignedOrbit.add c b) ↔
       SignedOrbit.lt a b := by
   rw [SignedOrbit.lt_iff_toInt_lt, SignedOrbit.lt_iff_toInt_lt]
   rw [SignedOrbit.add_toInt, SignedOrbit.add_toInt]
-  constructor
-  · intro h; omega
-  · intro h; omega
+  omega
 
 theorem lt_add_right_iff (a b c : SignedOrbit) :
     SignedOrbit.lt (SignedOrbit.add a c) (SignedOrbit.add b c) ↔
       SignedOrbit.lt a b := by
   rw [SignedOrbit.lt_iff_toInt_lt, SignedOrbit.lt_iff_toInt_lt]
   rw [SignedOrbit.add_toInt, SignedOrbit.add_toInt]
-  constructor
-  · intro h; omega
-  · intro h; omega
+  omega
 
 theorem add_le_add {a b c d : SignedOrbit}
     (hab : SignedOrbit.le a b) (hcd : SignedOrbit.le c d) :
@@ -2697,18 +2483,14 @@ theorem negate_le_negate_iff (a b : SignedOrbit) :
       SignedOrbit.le a b := by
   rw [SignedOrbit.le_iff_toInt_le, SignedOrbit.le_iff_toInt_le]
   rw [SignedOrbit.negate_toInt, SignedOrbit.negate_toInt]
-  constructor
-  · intro h; omega
-  · intro h; omega
+  omega
 
 theorem negate_lt_negate_iff (a b : SignedOrbit) :
     SignedOrbit.lt (SignedOrbit.negate b) (SignedOrbit.negate a) ↔
       SignedOrbit.lt a b := by
   rw [SignedOrbit.lt_iff_toInt_lt, SignedOrbit.lt_iff_toInt_lt]
   rw [SignedOrbit.negate_toInt, SignedOrbit.negate_toInt]
-  constructor
-  · intro h; omega
-  · intro h; omega
+  omega
 
 theorem cmp_add_left (a b c : SignedOrbit) :
     SignedOrbit.cmp (SignedOrbit.add c a) (SignedOrbit.add c b) =
@@ -2795,7 +2577,7 @@ theorem abs_toInt_of_negativeFlag {z : SignedOrbit}
   have hzneg : z.toInt < 0 :=
     (SignedOrbit.negativeFlag_eq_true_iff_toInt_neg z).mp h
   rw [SignedOrbit.abs_toNat]
-  omega
+  exact Int.ofNat_natAbs_of_nonpos (le_of_lt hzneg)
 
 theorem balanced_of_nonnegFlag {z : SignedOrbit}
     (h : z.nonnegFlag = true) :
@@ -3102,7 +2884,7 @@ theorem nonnegFlag_negate_ofOrbit_eq_true_iff_zero (n : DistinctionNat) :
     rw [h]
     rw [SignedOrbit.nonnegFlag_eq_true_iff, SignedOrbit.negate_toInt,
       SignedOrbit.ofOrbit_toInt, DistinctionNat.toNat_zero]
-    omega
+    norm_num
 
 theorem negativeFlag_negate_ofOrbit_eq_true_iff_ne_zero (n : DistinctionNat) :
     (SignedOrbit.negate (SignedOrbit.ofOrbit n)).negativeFlag = true ↔
@@ -3113,7 +2895,7 @@ theorem negativeFlag_negate_ofOrbit_eq_true_iff_ne_zero (n : DistinctionNat) :
     rw [SignedOrbit.negativeFlag_eq_true_iff_toInt_neg,
       SignedOrbit.negate_toInt, SignedOrbit.ofOrbit_toInt,
       DistinctionNat.toNat_zero] at h
-    omega
+    norm_num at h
   · intro hn
     exact SignedOrbit.negativeFlag_negate_ofOrbit_of_ne_zero n hn
 
@@ -3155,14 +2937,36 @@ theorem abs_le_iff_between (z : SignedOrbit) (n : DistinctionNat) :
         SignedOrbit.le z (SignedOrbit.ofOrbit n) := by
   rw [DistinctionNat.leq_eq_true_iff, SignedOrbit.le_iff_toInt_le,
     SignedOrbit.le_iff_toInt_le]
-  simp only [SignedOrbit.negate_toInt, SignedOrbit.ofOrbit_toInt,
+  simp [SignedOrbit.negate_toInt, SignedOrbit.ofOrbit_toInt,
     SignedOrbit.abs_toNat]
   constructor
   · intro h
-    exact ⟨by omega, by omega⟩
+    have hInt : ((Int.natAbs z.toInt : ℕ) : ℤ) ≤ (n.toNat : ℤ) := by
+      exact_mod_cast h
+    constructor
+    · by_cases hz : 0 ≤ z.toInt
+      · omega
+      · have hzle : z.toInt ≤ 0 := by omega
+        have habs : ((Int.natAbs z.toInt : ℕ) : ℤ) = -z.toInt :=
+          Int.ofNat_natAbs_of_nonpos hzle
+        omega
+    · by_cases hz : 0 ≤ z.toInt
+      · have habs : ((Int.natAbs z.toInt : ℕ) : ℤ) = z.toInt :=
+          Int.ofNat_natAbs_of_nonneg hz
+        omega
+      · omega
   · intro h
-    obtain ⟨hlo, hhi⟩ := h
-    omega
+    rcases h with ⟨hlo, hhi⟩
+    have hInt : ((Int.natAbs z.toInt : ℕ) : ℤ) ≤ (n.toNat : ℤ) := by
+      by_cases hz : 0 ≤ z.toInt
+      · have habs : ((Int.natAbs z.toInt : ℕ) : ℤ) = z.toInt :=
+          Int.ofNat_natAbs_of_nonneg hz
+        omega
+      · have hzle : z.toInt ≤ 0 := by omega
+        have habs : ((Int.natAbs z.toInt : ℕ) : ℤ) = -z.toInt :=
+          Int.ofNat_natAbs_of_nonpos hzle
+        omega
+    exact_mod_cast hInt
 
 theorem between_of_abs_le {z : SignedOrbit} {n : DistinctionNat}
     (h : DistinctionNat.leq z.abs n = true) :
@@ -3770,18 +3574,11 @@ theorem recip_num_not_balanced_zero_iff (a : RatioOrbit) :
 theorem crossEq_zero_iff_num_balanced_zero (a : RatioOrbit) :
     RatioOrbit.crossEq a RatioOrbit.zero ↔
       SignedOrbit.balanced a.num SignedOrbit.zero := by
-  have hden : ((RatioOrbit.zero.den).toNat : ℤ) ≠ 0 := by
-    have := RatioOrbit.zero.den_toNat_ne_zero; omega
   unfold RatioOrbit.crossEq RatioOrbit.zero
   rw [SignedOrbit.balanced_iff_toInt_eq, SignedOrbit.scaleByNat_toInt,
     SignedOrbit.scaleByNat_toInt, SignedOrbit.zero_toInt,
     SignedOrbit.balanced_iff_toInt_eq, SignedOrbit.zero_toInt]
-  constructor
-  · intro h
-    rw [Int.zero_mul] at h
-    exact Int.eq_of_mul_eq_mul_right hden (by rw [Int.zero_mul]; exact h)
-  · intro h
-    rw [h, Int.zero_mul, Int.zero_mul]
+  simp
 
 theorem zero_crossEq_iff_num_balanced_zero (a : RatioOrbit) :
     RatioOrbit.crossEq RatioOrbit.zero a ↔
