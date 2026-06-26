@@ -43,13 +43,25 @@ Mathematics is what distinction permits.
   the constructive side supports.
 - **Factorization** (`ActualMathematics/Factorization/*`): the recognition account of
   integer factorization (period spectra, unit groups, coordinate charts).
-- **The recognition cost** (`IndisputableMonolith/Cost/*`): the cost functional
+- **The recognition cost** (`ActualMathematics/Cost/*`): the cost functional
   `J(x) = ½(x + 1/x) − 1` and its uniqueness theorem `law_of_logic_forces_jcost` (an
   Aczél-style functional-equation classification), the bridge from the ordered field to a
   metric.
-- **The demarcation** (`ActualMathematics/RealLineNonNativity`, `ContinuumTax`-adjacent
-  modules, the calibration/completeness-independence layer): the forced/posited boundary,
-  stated as Lean results rather than philosophy.
+- **The demarcation** (`ActualMathematics/DeltaForced`): the predicate `DeltaForced X :=
+  Nonempty (X ↪ ℕ)` (a checkable countable certificate) and its ontological reading
+  `PhysicallyReal`, with the headline split `demarcation`: ℕ, ℤ, ℚ are δ-forced (the
+  forced conjuncts choice-free), ℝ is not. The forced realm is closed under product,
+  subtype, and sum.
+- **The omniscience calibration** (`ActualMathematics/Omniscience`): `LPO`, `WLPO`,
+  `LLPO`, and Markov's principle stated over `ℕ → Bool`, with the choice-free hierarchy
+  (`LPO ⇒ WLPO`, `LPO ⇒ LLPO`, `LPO ⇒ Markov`, `WLPO ∧ Markov ⇒ LPO`). These are the units
+  in which the strength of a completeness posit is measured.
+- **The continuum tax** (`ActualMathematics/ContinuumTax`, with `RealLineNonNativity` for
+  the cardinality teeth): renormalization as accounting on the continuum purchase. A
+  UV-divergent cutoff display carries no finite certificate; every renormalization scheme's
+  counterterm is itself divergent while its residue is certified; two schemes differ by a
+  finite (certified) amount; and the φ-forced measure makes the mode sum converge to
+  `c·φ²` where the flat (continuum) weighting diverges.
 
 ## Build
 
@@ -73,10 +85,26 @@ lake build ActualMathematics.Grow.RatioOrbitMulRecip
   (`#print axioms` ⊆ `{propext, Quot.sound}`). That is the literal sense in which they are
   forced, not assumed.
 - `law_of_logic_forces_jcost` is a real uniqueness theorem (no project-local axioms).
+- `demarcation` and `continuumTaxCert_holds` carry `Classical.choice` by design: their ℝ
+  conjuncts use the classical uncountability of the continuum, a fact about the
+  display-tier object, not about the forced side. The forced conjuncts (`forcedTower`) and
+  the omniscience implications are choice-free, machine-verified by `#print axioms`.
 - The forced-vs-posited demarcation is the research frontier: the forced side is the
   constructive continuum; the unforced part is the named family of completeness /
   omniscience principles. Some of those are stated here as independence results; the full
   classification is ongoing.
+
+### Provenance of the two provider modules
+
+`ActualMathematics/Constants.lean` and `ActualMathematics/MeasureForcing.lean` are
+self-contained providers, not derivations. In the parent Recognition Science library the
+golden ratio φ is forced by the self-similarity fixed point of the recognition cost, and
+the per-rung weight `ρ = φ⁻¹` (with partition function `Z = φ²`) is the T9-forced measure;
+both come with large dependency trees. `ContinuumTax` needs only φ's closed form and three
+arithmetic facts (`φ > 1`, `φ² = φ + 1`, `1 − ρ = 1/φ²`), so these two modules give φ in
+closed form `(1 + √5)/2` and prove exactly those facts from Mathlib alone. This keeps the
+demarcation library self-contained; the forcing derivation of φ lives in the parent
+library, not here.
 
 ## Papers
 
