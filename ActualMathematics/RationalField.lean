@@ -121,9 +121,8 @@ theorem add_zero' (a : PRCRat) :
   add_zero a
 
 theorem add_left_neg' (a : PRCRat) :
-    -a + a = 0 := by
-  apply toRat_injective
-  simp
+    -a + a = 0 :=
+  negate_add a
 
 theorem add_right_neg' (a : PRCRat) :
     a + -a = 0 :=
@@ -142,38 +141,34 @@ theorem mul_one' (a : PRCRat) :
   mul_one a
 
 theorem zero_mul' (a : PRCRat) :
-    0 * a = 0 := by
-  apply toRat_injective
-  simp
+    0 * a = 0 :=
+  zero_mul a
 
 theorem mul_zero' (a : PRCRat) :
-    a * 0 = 0 := by
-  apply toRat_injective
-  simp
+    a * 0 = 0 :=
+  mul_zero a
 
 theorem right_distrib' (a b c : PRCRat) :
-    (a + b) * c = a * c + b * c := by
-  apply toRat_injective
-  simp [Rat.add_mul]
+    (a + b) * c = a * c + b * c :=
+  right_distrib a b c
 
 theorem left_distrib' (a b c : PRCRat) :
     a * (b + c) = a * b + a * c :=
   left_distrib a b c
 
-theorem zero_ne_one : (0 : PRCRat) ≠ 1 := by
-  intro h
-  have hrat := congrArg toRat h
-  simp at hrat
+/- `zero_ne_one` is proved structurally (choice-free) in `IntegerRational.lean`
+via the `isZero` discriminator; the operator-form statement `(0 : PRCRat) ≠ 1`
+is definitionally the same proposition. -/
 
-theorem inv_zero : (0 : PRCRat)⁻¹ = 0 := by
-  apply toRat_injective
-  simp
+theorem inv_zero : (0 : PRCRat)⁻¹ = 0 :=
+  recip_zero
 
 theorem inv_mul_cancel {a : PRCRat} (h : a.toRat ≠ 0) :
     a⁻¹ * a = 1 := by
-  apply toRat_injective
-  rw [toRat_mul', toRat_inv']
-  simp [h]
+  apply recip_mul_cancel₀
+  intro hz
+  apply h
+  rw [hz, zero_toRat]
 
 theorem div_mul_cancel {a b : PRCRat} (h : b.toRat ≠ 0) :
     (a / b) * b = a := by

@@ -1,5 +1,5 @@
 /-
-  ActualMathematics/DeltaForced.lean
+  PrimitiveRecognitionCalculus/DeltaForced.lean
 
   The demarcation predicate: what it means for a type to be δ-forced, and the
   headline split it induces (ℕ, ℤ, ℚ forced; ℝ not).
@@ -166,86 +166,11 @@ theorem deltaForced_int : DeltaForced ℤ := ⟨⟨intToNat, intToNat_inj⟩⟩
 tower constructed in the companion algebra paper (ℕδ → ℤδ → ℚδ). Choice-free. -/
 theorem deltaForced_rat : DeltaForced ℚ := ⟨⟨ratToNat, ratToNat_inj⟩⟩
 
-/-! ### Decidable base and choice-free closure
-
-Every finite type carries an explicit certificate, and the forced realm is closed
-under the operations distinction performs (pairing, branch, restriction) by EXPLICIT
-choice-free certificates: pairing via `dpair`, branch by parity, restriction by
-inclusion. These are the choice-free witnesses behind the classical `Countable`-bridge
-versions in the next subsection. -/
-
-/-- Explicit certificate `Bool → ℕ`: `false ↦ 0`, `true ↦ 1`. -/
-def boolToNat : Bool → ℕ := fun b => cond b 1 0
-
-theorem boolToNat_inj : Function.Injective boolToNat := by
-  intro a b h
-  cases a <;> cases b <;> simp_all [boolToNat]
-
-/-- The two-element type is δ-forced. Choice-free. -/
-theorem deltaForced_bool : DeltaForced Bool := ⟨⟨boolToNat, boolToNat_inj⟩⟩
-
-/-- The one-element type is δ-forced. Choice-free. -/
-theorem deltaForced_unit : DeltaForced Unit :=
-  ⟨⟨fun _ => 0, fun a b _ => Subsingleton.elim a b⟩⟩
-
-/-- Each standard finite type `Fin n` is δ-forced via `Fin.val`. Choice-free. -/
-theorem deltaForced_fin (n : ℕ) : DeltaForced (Fin n) := ⟨⟨Fin.val, Fin.val_injective⟩⟩
-
-/-- Pairing two forced collections is forced, by the EXPLICIT certificate
-`(x, y) ↦ dpair (c_X x) (c_Y y)`. Choice-free (contrast `deltaForced_prod` below,
-which routes through the classical `Countable` bridge). -/
-theorem deltaForced_prod_cf {X : Type u} {Y : Type v}
-    (hX : DeltaForced X) (hY : DeltaForced Y) : DeltaForced (X × Y) := by
-  obtain ⟨eX⟩ := hX
-  obtain ⟨eY⟩ := hY
-  refine ⟨⟨fun p => dpair (eX p.1) (eY p.2), ?_⟩⟩
-  intro a b h
-  have h' : dpair (eX a.1) (eY a.2) = dpair (eX b.1) (eY b.2) := h
-  obtain ⟨h1, h2⟩ := dpair_inj2 h'
-  exact Prod.ext_iff.mpr ⟨eX.injective h1, eY.injective h2⟩
-
-/-- Choosing between two forced branches is forced, by the EXPLICIT parity-interleaved
-certificate `inl x ↦ 2·c_X x`, `inr y ↦ 2·c_Y y + 1`. Choice-free. -/
-theorem deltaForced_sum_cf {X : Type u} {Y : Type v}
-    (hX : DeltaForced X) (hY : DeltaForced Y) : DeltaForced (X ⊕ Y) := by
-  obtain ⟨eX⟩ := hX
-  obtain ⟨eY⟩ := hY
-  refine ⟨⟨Sum.elim (fun x => 2 * eX x) (fun y => 2 * eY y + 1), ?_⟩⟩
-  intro a b h
-  cases a with
-  | inl xa =>
-    cases b with
-    | inl xb =>
-      simp only [Sum.elim_inl] at h
-      exact congrArg Sum.inl (eX.injective (by omega))
-    | inr yb =>
-      simp only [Sum.elim_inl, Sum.elim_inr] at h; exfalso; omega
-  | inr ya =>
-    cases b with
-    | inl xb =>
-      simp only [Sum.elim_inl, Sum.elim_inr] at h; exfalso; omega
-    | inr yb =>
-      simp only [Sum.elim_inr] at h
-      exact congrArg Sum.inr (eY.injective (by omega))
-
 /-! ### The continuum is not forced
 
-`ℝ` carries no certificate. The choice-free core is the bare diagonal
-(`no_enumeration_seq`): the binary sequences cannot be enumerated, with no excluded
-middle and no choice. The classical route (`not_deltaForced_real`) additionally makes
-ℝ countable against `aleph_0 < 𝔠`; it uses the classical cardinality of ℝ and is a
-convenience for a classical reader. -/
-
-/-- **The continuum is not δ-enumerable (the bare diagonal).** No function
-`ℕ → (ℕ → Bool)` is surjective: Cantor's diagonal, complementing one bit. Uses neither
-the axiom of choice nor excluded middle (the only case split is on the decidable
-two-element type), so it survives in a constructive metatheory. This is the choice-free
-core of the demarcation. -/
-theorem no_enumeration_seq : ¬ ∃ f : ℕ → (ℕ → Bool), Function.Surjective f := by
-  rintro ⟨f, hf⟩
-  obtain ⟨m, hm⟩ := hf (fun n => !(f n n))
-  have hcontra : f m m = !(f m m) := congrFun hm m
-  cases h : f m m <;> simp [h] at hcontra
+`ℝ` carries no certificate: a certificate would make ℝ countable, contradicting its
+classical uncountability. This is the formal "the continuum is display tier, not
+forced." The proof legitimately uses the classical cardinality of ℝ. -/
 
 /-- A δ-forced type is countable (the certificate is an injection into ℕ).
 Choice-free. -/

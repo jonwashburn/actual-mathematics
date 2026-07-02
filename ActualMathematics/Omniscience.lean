@@ -1,5 +1,5 @@
 /-
-  ActualMathematics/Omniscience.lean
+  PrimitiveRecognitionCalculus/Omniscience.lean
 
   The omniscience principles, as the UNITS in which the strength of a non-forced
   posit is measured.
@@ -112,15 +112,6 @@ theorem wlpo_and_markov_imp_lpo (hw : WLPO) (hm : MarkovPrinciple) : LPO := by
   rcases hw α with hall | hne
   · exact Or.inl hall
   · exact Or.inr (hm α hne)
-
-/-- **The location of `LPO`.** `LPO ↔ (WLPO ∧ Markov)`: deciding "all zero or some one"
-on the affirmative side needs both that the everywhere-zero alternative fails (`WLPO`)
-and that the failure is realized by an actual index (`Markov`). The two factors are the
-independent coordinates `LPO` decomposes into. Choice-free. -/
-theorem lpo_iff_wlpo_and_markov : LPO ↔ (WLPO ∧ MarkovPrinciple) := by
-  constructor
-  · intro h; exact ⟨lpo_imp_wlpo h, lpo_imp_markov h⟩
-  · rintro ⟨hw, hm⟩; exact wlpo_and_markov_imp_lpo hw hm
 
 end Omniscience
 end ActualMathematics

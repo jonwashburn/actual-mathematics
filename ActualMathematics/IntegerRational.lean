@@ -60,19 +60,25 @@ theorem toNat_truncatedSub (a b : DistinctionNat) :
       | succ b =>
           simp [truncatedSub, ih]
 
-/-- Internal Boolean order agrees with the verifier `Nat` order. -/
+/-- Internal Boolean order agrees with the verifier `Nat` order.
+    Choice-free: the proof uses only structural recursion and the successor
+    order lemma, so its axiom footprint is `[propext]` (audit tier FORCED). -/
 theorem leq_eq_true_iff (a b : DistinctionNat) :
     leq a b = true ↔ a.toNat ≤ b.toNat := by
   induction a generalizing b with
   | zero =>
       cases b with
-      | zero => simp [leq]
-      | succ b => simp [leq]
+      | zero => exact ⟨fun _ => Nat.le_refl 0, fun _ => rfl⟩
+      | succ b => exact ⟨fun _ => Nat.zero_le _, fun _ => rfl⟩
   | succ a ih =>
       cases b with
-      | zero => simp [leq]
+      | zero =>
+          show (false = true) ↔ (toNat a).succ ≤ (0 : Nat)
+          exact ⟨fun h => Bool.noConfusion h,
+                 fun h => absurd h (Nat.not_succ_le_zero _)⟩
       | succ b =>
-          simp [leq, ih]
+          show leq a b = true ↔ (toNat a).succ ≤ (toNat b).succ
+          rw [ih, Nat.succ_le_succ_iff]
 
 /-- Internal Boolean order is false exactly when verifier order is reversed. -/
 theorem leq_eq_false_iff (a b : DistinctionNat) :
@@ -340,12 +346,16 @@ theorem nonnegFlag_eq_true_iff (z : SignedOrbit) :
     z.nonnegFlag = true ↔ 0 ≤ z.toInt := by
   unfold nonnegFlag SignedOrbit.toInt
   rw [DistinctionNat.leq_eq_true_iff]
-  omega
+  constructor
+  · intro h; omega
+  · intro h; omega
 
 theorem nonnegFlag_eq_false_iff (z : SignedOrbit) :
     z.nonnegFlag = false ↔ z.toInt < 0 := by
   rw [← Bool.not_eq_true, nonnegFlag_eq_true_iff]
-  omega
+  constructor
+  · intro h; omega
+  · intro h; omega
 
 /-- Internal nonnegativity agrees with the verifier integer display. -/
 theorem nonneg_iff_toInt_nonneg (z : SignedOrbit) :
@@ -1195,8 +1205,122 @@ def mul : PRCRat → PRCRat → PRCRat :=
 private theorem recip_respects_cross {a b : RatioOrbit}
     (h : RatioOrbit.crossEq a b) :
     RatioOrbit.crossEq (RatioOrbit.recip a) (RatioOrbit.recip b) := by
-  rw [RatioOrbit.crossEq_iff_toRat_eq] at *
-  rw [RatioOrbit.recip_toRat, RatioOrbit.recip_toRat, h]
+  -- Choice-free: route through the integer cross-multiplication hub,
+  -- never through the classical ℚ display.
+  rw [RatioOrbit.crossEq_iff_toIntCross] at h
+  have hda : 0 < (a.den.toNat : ℤ) := by
+    have := a.den_toNat_ne_zero
+    omega
+  have hdb : 0 < (b.den.toNat : ℤ) := by
+    have := b.den_toNat_ne_zero
+    omega
+  by_cases hza : SignedOrbit.balanced a.num SignedOrbit.zero
+  · -- Zero numerators propagate across crossEq; both reciprocals are zero.
+    have hza' : a.num.toInt = 0 := by
+      have h0 := (SignedOrbit.balanced_iff_toInt_eq a.num SignedOrbit.zero).mp hza
+      rwa [SignedOrbit.zero_toInt] at h0
+    have hzb' : b.num.toInt = 0 := by
+      have h0 : b.num.toInt * (a.den.toNat : ℤ) = 0 := by
+        rw [← h, hza', Int.zero_mul]
+      have hda' : (a.den.toNat : ℤ) ≠ 0 := by omega
+      have h1 : b.num.toInt * (a.den.toNat : ℤ) = 0 * (a.den.toNat : ℤ) := by
+        rw [h0, Int.zero_mul]
+      exact Int.eq_of_mul_eq_mul_right hda' h1
+    have hzb : SignedOrbit.balanced b.num SignedOrbit.zero := by
+      rw [SignedOrbit.balanced_iff_toInt_eq, SignedOrbit.zero_toInt]
+      exact hzb'
+    unfold RatioOrbit.recip
+    rw [dif_pos hza, dif_pos hzb]
+    exact RatioOrbit.crossEq_refl RatioOrbit.zero
+  · -- Nonzero numerators: signs must agree across the cross-equality.
+    have hna : a.num.toInt ≠ 0 := by
+      intro hz
+      apply hza
+      rw [SignedOrbit.balanced_iff_toInt_eq, SignedOrbit.zero_toInt]
+      exact hz
+    have hnb : b.num.toInt ≠ 0 := by
+      intro hz
+      apply hna
+      have h0 : a.num.toInt * (b.den.toNat : ℤ) = 0 := by
+        rw [h, hz, Int.zero_mul]
+      have hdb' : (b.den.toNat : ℤ) ≠ 0 := by omega
+      have h1 : a.num.toInt * (b.den.toNat : ℤ) = 0 * (b.den.toNat : ℤ) := by
+        rw [h0, Int.zero_mul]
+      exact Int.eq_of_mul_eq_mul_right hdb' h1
+    have hzb : ¬ SignedOrbit.balanced b.num SignedOrbit.zero := by
+      intro hb
+      apply hnb
+      have h0 := (SignedOrbit.balanced_iff_toInt_eq b.num SignedOrbit.zero).mp hb
+      rwa [SignedOrbit.zero_toInt] at h0
+    unfold RatioOrbit.recip
+    rw [dif_neg hza, dif_neg hzb]
+    rw [RatioOrbit.crossEq_iff_toIntCross]
+    simp only [RatioOrbit.recipNonzero]
+    by_cases hfa : a.num.nonnegFlag = true
+    · have hpa : 0 < a.num.toInt := by
+        have := (SignedOrbit.nonnegFlag_eq_true_iff a.num).mp hfa
+        omega
+      by_cases hfb : b.num.nonnegFlag = true
+      · -- Both positive: cross identity is the hypothesis, transposed.
+        have hpb : 0 < b.num.toInt := by
+          have := (SignedOrbit.nonnegFlag_eq_true_iff b.num).mp hfb
+          omega
+        rw [if_pos hfa, if_pos hfb, SignedOrbit.ofOrbit_toInt,
+            SignedOrbit.ofOrbit_toInt, SignedOrbit.abs_toNat,
+            SignedOrbit.abs_toNat]
+        have haa : ((a.num.toInt.natAbs : ℕ) : ℤ) = a.num.toInt := by omega
+        have hbb : ((b.num.toInt.natAbs : ℕ) : ℤ) = b.num.toInt := by omega
+        rw [haa, hbb]
+        linear_combination -h
+      · -- a positive, b negative: contradicts crossEq.
+        exfalso
+        have hfb' : b.num.nonnegFlag = false := by
+          cases hv : b.num.nonnegFlag with
+          | false => rfl
+          | true => exact absurd hv hfb
+        have hqb : b.num.toInt < 0 :=
+          (SignedOrbit.nonnegFlag_eq_false_iff b.num).mp hfb'
+        have h1 : (0 : ℤ) < a.num.toInt * (b.den.toNat : ℤ) := Int.mul_pos hpa hdb
+        have h2 : (0 : ℤ) < (-b.num.toInt) * (a.den.toNat : ℤ) :=
+          Int.mul_pos (by omega) hda
+        have h3 : (-b.num.toInt) * (a.den.toNat : ℤ) =
+            -(b.num.toInt * (a.den.toNat : ℤ)) := by ring
+        rw [h] at h1
+        omega
+    · have hfa' : a.num.nonnegFlag = false := by
+        cases hv : a.num.nonnegFlag with
+        | false => rfl
+        | true => exact absurd hv hfa
+      have hqa : a.num.toInt < 0 :=
+        (SignedOrbit.nonnegFlag_eq_false_iff a.num).mp hfa'
+      by_cases hfb : b.num.nonnegFlag = true
+      · -- a negative, b positive: contradicts crossEq.
+        exfalso
+        have hpb : 0 < b.num.toInt := by
+          have := (SignedOrbit.nonnegFlag_eq_true_iff b.num).mp hfb
+          omega
+        have h1 : (0 : ℤ) < (-a.num.toInt) * (b.den.toNat : ℤ) :=
+          Int.mul_pos (by omega) hdb
+        have h1' : (-a.num.toInt) * (b.den.toNat : ℤ) =
+            -(a.num.toInt * (b.den.toNat : ℤ)) := by ring
+        have h2 : (0 : ℤ) < b.num.toInt * (a.den.toNat : ℤ) := Int.mul_pos hpb hda
+        rw [h] at h1'
+        omega
+      · -- Both negative: signs cancel, cross identity again the hypothesis.
+        have hfb' : b.num.nonnegFlag = false := by
+          cases hv : b.num.nonnegFlag with
+          | false => rfl
+          | true => exact absurd hv hfb
+        have hqb : b.num.toInt < 0 :=
+          (SignedOrbit.nonnegFlag_eq_false_iff b.num).mp hfb'
+        rw [if_neg hfa, if_neg hfb, SignedOrbit.negate_toInt,
+            SignedOrbit.negate_toInt, SignedOrbit.ofOrbit_toInt,
+            SignedOrbit.ofOrbit_toInt, SignedOrbit.abs_toNat,
+            SignedOrbit.abs_toNat]
+        have haa : ((a.num.toInt.natAbs : ℕ) : ℤ) = -a.num.toInt := by omega
+        have hbb : ((b.num.toInt.natAbs : ℕ) : ℤ) = -b.num.toInt := by omega
+        rw [haa, hbb]
+        linear_combination -h
 
 /-- K4.12. Total reciprocal on PRC rationals, lifted from ratio-orbit
 reciprocal and sending zero to zero. -/
@@ -1218,56 +1342,339 @@ def recip : PRCRat → PRCRat :=
   show (RatioOrbit.recip a).toRat = (a.toRat)⁻¹
   exact RatioOrbit.recip_toRat a
 
-/-! ### PRCRat field-style laws, proved via the injective display -/
+/-! ### PRCRat field-style laws, proved choice-free through the integer
+cross-multiplication hub
+
+Each law is proved directly on the quotient: `Quot.induction_on` exposes
+representatives, `mk_eq_mk_of_crossEq` (a `Quot.sound` wrapper) reduces the
+goal to `RatioOrbit.crossEq`, and `crossEq_iff_toIntCross` turns that into an
+integer polynomial identity closed by `ring`. None of these proofs routes
+through the classical `ℚ` display (`toRat`), so the laws stay on the
+`{propext, Quot.sound}` axiom basis. -/
+
+private theorem zero_num_toInt : (RatioOrbit.zero).num.toInt = 0 :=
+  SignedOrbit.zero_toInt
+
+private theorem zero_den_toNat : (RatioOrbit.zero).den.toNat = 1 := by
+  show (DistinctionNat.succ DistinctionNat.zero).toNat = 1
+  rw [DistinctionNat.toNat_succ, DistinctionNat.toNat_zero]
+
+private theorem one_num_toInt : (RatioOrbit.one).num.toInt = 1 :=
+  SignedOrbit.one_toInt
+
+private theorem one_den_toNat : (RatioOrbit.one).den.toNat = 1 := by
+  show (DistinctionNat.succ DistinctionNat.zero).toNat = 1
+  rw [DistinctionNat.toNat_succ, DistinctionNat.toNat_zero]
+
+/-- K4.8. Choice-free structural zero test: a PRC rational is in the zero
+class iff its representative's numerator balances the zero signed orbit.
+Well-definedness routes through the integer cross-multiplication hub (no `ℚ`
+display), so the definition depends only on `{propext, Quot.sound}`. -/
+def isZero : PRCRat → Prop :=
+  Quot.lift
+    (fun q => SignedOrbit.balanced q.num SignedOrbit.zero)
+    (by
+      intro a b h
+      have h' := (RatioOrbit.crossEq_iff_toIntCross a b).mp h
+      have hda : (a.den.toNat : ℤ) ≠ 0 := by
+        have := a.den_toNat_ne_zero
+        omega
+      have hdb : (b.den.toNat : ℤ) ≠ 0 := by
+        have := b.den_toNat_ne_zero
+        omega
+      apply propext
+      show SignedOrbit.balanced a.num SignedOrbit.zero
+          ↔ SignedOrbit.balanced b.num SignedOrbit.zero
+      rw [SignedOrbit.balanced_iff_toInt_eq, SignedOrbit.balanced_iff_toInt_eq,
+          SignedOrbit.zero_toInt]
+      constructor
+      · intro ha0
+        have h0 : b.num.toInt * (a.den.toNat : ℤ) = 0 * (a.den.toNat : ℤ) := by
+          rw [← h', ha0, Int.zero_mul, Int.zero_mul]
+        exact Int.eq_of_mul_eq_mul_right hda h0
+      · intro hb0
+        have h0 : a.num.toInt * (b.den.toNat : ℤ) = 0 * (b.den.toNat : ℤ) := by
+          rw [h', hb0, Int.zero_mul, Int.zero_mul]
+        exact Int.eq_of_mul_eq_mul_right hdb h0)
+
+@[simp] theorem isZero_mk (q : RatioOrbit) :
+    isZero (mk q) ↔ SignedOrbit.balanced q.num SignedOrbit.zero :=
+  Iff.rfl
+
+theorem isZero_zero : isZero zero :=
+  SignedOrbit.balanced_refl SignedOrbit.zero
+
+theorem not_isZero_one : ¬ isZero one := by
+  intro h1
+  have h2 := (SignedOrbit.balanced_iff_toInt_eq
+    SignedOrbit.one SignedOrbit.zero).mp h1
+  rw [SignedOrbit.one_toInt, SignedOrbit.zero_toInt] at h2
+  omega
+
+/-- K4.8. Structural nontriviality: the zero and one classes are distinct.
+Proved by the choice-free `isZero` discriminator (no `ℚ` display). -/
+theorem zero_ne_one : (zero : PRCRat) ≠ one := by
+  intro h
+  exact not_isZero_one (h ▸ isZero_zero)
 
 theorem add_comm (a b : PRCRat) : add a b = add b a := by
-  apply toRat_injective
-  simp [Rat.add_comm]
+  refine Quot.induction_on a (fun a => ?_)
+  refine Quot.induction_on b (fun b => ?_)
+  show mk (RatioOrbit.add a b) = mk (RatioOrbit.add b a)
+  apply mk_eq_mk_of_crossEq
+  rw [RatioOrbit.crossEq_iff_toIntCross]
+  unfold RatioOrbit.add
+  simp only [SignedOrbit.add_toInt, SignedOrbit.scaleByNat_toInt,
+    DistinctionNat.toNat_mul]
+  push_cast
+  ring
 
 theorem add_assoc (a b c : PRCRat) :
     add (add a b) c = add a (add b c) := by
-  apply toRat_injective
-  simp [Rat.add_assoc]
+  refine Quot.induction_on a (fun a => ?_)
+  refine Quot.induction_on b (fun b => ?_)
+  refine Quot.induction_on c (fun c => ?_)
+  show mk (RatioOrbit.add (RatioOrbit.add a b) c)
+      = mk (RatioOrbit.add a (RatioOrbit.add b c))
+  apply mk_eq_mk_of_crossEq
+  rw [RatioOrbit.crossEq_iff_toIntCross]
+  unfold RatioOrbit.add
+  simp only [SignedOrbit.add_toInt, SignedOrbit.scaleByNat_toInt,
+    DistinctionNat.toNat_mul]
+  push_cast
+  ring
 
 theorem zero_add (a : PRCRat) : add zero a = a := by
-  apply toRat_injective
-  simp
+  refine Quot.induction_on a (fun a => ?_)
+  show mk (RatioOrbit.add RatioOrbit.zero a) = mk a
+  apply mk_eq_mk_of_crossEq
+  rw [RatioOrbit.crossEq_iff_toIntCross]
+  unfold RatioOrbit.add
+  simp only [SignedOrbit.add_toInt, SignedOrbit.scaleByNat_toInt,
+    DistinctionNat.toNat_mul, zero_num_toInt, zero_den_toNat]
+  push_cast
+  ring
 
 theorem add_zero (a : PRCRat) : add a zero = a := by
-  apply toRat_injective
-  simp
+  refine Quot.induction_on a (fun a => ?_)
+  show mk (RatioOrbit.add a RatioOrbit.zero) = mk a
+  apply mk_eq_mk_of_crossEq
+  rw [RatioOrbit.crossEq_iff_toIntCross]
+  unfold RatioOrbit.add
+  simp only [SignedOrbit.add_toInt, SignedOrbit.scaleByNat_toInt,
+    DistinctionNat.toNat_mul, zero_num_toInt, zero_den_toNat]
+  push_cast
+  ring
 
 theorem add_negate (a : PRCRat) : add a (negate a) = zero := by
-  apply toRat_injective
-  simp
+  refine Quot.induction_on a (fun a => ?_)
+  show mk (RatioOrbit.add a (RatioOrbit.negate a)) = mk RatioOrbit.zero
+  apply mk_eq_mk_of_crossEq
+  rw [RatioOrbit.crossEq_iff_toIntCross]
+  unfold RatioOrbit.add RatioOrbit.negate
+  simp only [SignedOrbit.add_toInt, SignedOrbit.negate_toInt,
+    SignedOrbit.scaleByNat_toInt, DistinctionNat.toNat_mul,
+    zero_num_toInt, zero_den_toNat]
+  push_cast
+  ring
+
+theorem negate_add (a : PRCRat) : add (negate a) a = zero := by
+  refine Quot.induction_on a (fun a => ?_)
+  show mk (RatioOrbit.add (RatioOrbit.negate a) a) = mk RatioOrbit.zero
+  apply mk_eq_mk_of_crossEq
+  rw [RatioOrbit.crossEq_iff_toIntCross]
+  unfold RatioOrbit.add RatioOrbit.negate
+  simp only [SignedOrbit.add_toInt, SignedOrbit.negate_toInt,
+    SignedOrbit.scaleByNat_toInt, DistinctionNat.toNat_mul,
+    zero_num_toInt, zero_den_toNat]
+  push_cast
+  ring
 
 theorem mul_comm (a b : PRCRat) : mul a b = mul b a := by
-  apply toRat_injective
-  simp [Rat.mul_comm]
+  refine Quot.induction_on a (fun a => ?_)
+  refine Quot.induction_on b (fun b => ?_)
+  show mk (RatioOrbit.mul a b) = mk (RatioOrbit.mul b a)
+  apply mk_eq_mk_of_crossEq
+  rw [RatioOrbit.crossEq_iff_toIntCross]
+  unfold RatioOrbit.mul
+  simp only [SignedOrbit.mul_toInt, DistinctionNat.toNat_mul]
+  push_cast
+  ring
 
 theorem mul_assoc (a b c : PRCRat) :
     mul (mul a b) c = mul a (mul b c) := by
-  apply toRat_injective
-  simp [Rat.mul_assoc]
+  refine Quot.induction_on a (fun a => ?_)
+  refine Quot.induction_on b (fun b => ?_)
+  refine Quot.induction_on c (fun c => ?_)
+  show mk (RatioOrbit.mul (RatioOrbit.mul a b) c)
+      = mk (RatioOrbit.mul a (RatioOrbit.mul b c))
+  apply mk_eq_mk_of_crossEq
+  rw [RatioOrbit.crossEq_iff_toIntCross]
+  unfold RatioOrbit.mul
+  simp only [SignedOrbit.mul_toInt, DistinctionNat.toNat_mul]
+  push_cast
+  ring
 
 theorem one_mul (a : PRCRat) : mul one a = a := by
-  apply toRat_injective
-  simp
+  refine Quot.induction_on a (fun a => ?_)
+  show mk (RatioOrbit.mul RatioOrbit.one a) = mk a
+  apply mk_eq_mk_of_crossEq
+  rw [RatioOrbit.crossEq_iff_toIntCross]
+  unfold RatioOrbit.mul
+  simp only [SignedOrbit.mul_toInt, DistinctionNat.toNat_mul,
+    one_num_toInt, one_den_toNat]
+  push_cast
+  ring
 
 theorem mul_one (a : PRCRat) : mul a one = a := by
-  apply toRat_injective
-  simp
+  refine Quot.induction_on a (fun a => ?_)
+  show mk (RatioOrbit.mul a RatioOrbit.one) = mk a
+  apply mk_eq_mk_of_crossEq
+  rw [RatioOrbit.crossEq_iff_toIntCross]
+  unfold RatioOrbit.mul
+  simp only [SignedOrbit.mul_toInt, DistinctionNat.toNat_mul,
+    one_num_toInt, one_den_toNat]
+  push_cast
+  ring
+
+theorem zero_mul (a : PRCRat) : mul zero a = zero := by
+  refine Quot.induction_on a (fun a => ?_)
+  show mk (RatioOrbit.mul RatioOrbit.zero a) = mk RatioOrbit.zero
+  apply mk_eq_mk_of_crossEq
+  rw [RatioOrbit.crossEq_iff_toIntCross]
+  unfold RatioOrbit.mul
+  simp only [SignedOrbit.mul_toInt, DistinctionNat.toNat_mul,
+    zero_num_toInt, zero_den_toNat]
+  push_cast
+  ring
+
+theorem mul_zero (a : PRCRat) : mul a zero = zero := by
+  refine Quot.induction_on a (fun a => ?_)
+  show mk (RatioOrbit.mul a RatioOrbit.zero) = mk RatioOrbit.zero
+  apply mk_eq_mk_of_crossEq
+  rw [RatioOrbit.crossEq_iff_toIntCross]
+  unfold RatioOrbit.mul
+  simp only [SignedOrbit.mul_toInt, DistinctionNat.toNat_mul,
+    zero_num_toInt, zero_den_toNat]
+  push_cast
+  ring
 
 theorem left_distrib (a b c : PRCRat) :
     mul a (add b c) = add (mul a b) (mul a c) := by
-  apply toRat_injective
-  simp [Rat.mul_add]
+  refine Quot.induction_on a (fun a => ?_)
+  refine Quot.induction_on b (fun b => ?_)
+  refine Quot.induction_on c (fun c => ?_)
+  show mk (RatioOrbit.mul a (RatioOrbit.add b c))
+      = mk (RatioOrbit.add (RatioOrbit.mul a b) (RatioOrbit.mul a c))
+  apply mk_eq_mk_of_crossEq
+  rw [RatioOrbit.crossEq_iff_toIntCross]
+  unfold RatioOrbit.mul RatioOrbit.add
+  simp only [SignedOrbit.add_toInt, SignedOrbit.mul_toInt,
+    SignedOrbit.scaleByNat_toInt, DistinctionNat.toNat_mul]
+  push_cast
+  ring
 
+theorem right_distrib (a b c : PRCRat) :
+    mul (add a b) c = add (mul a c) (mul b c) := by
+  refine Quot.induction_on a (fun a => ?_)
+  refine Quot.induction_on b (fun b => ?_)
+  refine Quot.induction_on c (fun c => ?_)
+  show mk (RatioOrbit.mul (RatioOrbit.add a b) c)
+      = mk (RatioOrbit.add (RatioOrbit.mul a c) (RatioOrbit.mul b c))
+  apply mk_eq_mk_of_crossEq
+  rw [RatioOrbit.crossEq_iff_toIntCross]
+  unfold RatioOrbit.mul RatioOrbit.add
+  simp only [SignedOrbit.add_toInt, SignedOrbit.mul_toInt,
+    SignedOrbit.scaleByNat_toInt, DistinctionNat.toNat_mul]
+  push_cast
+  ring
+
+/-- K4.12. Structural reciprocal cancellation: any PRC rational outside the
+zero class satisfies `a * a⁻¹ = 1`. The nonzero hypothesis is the structural
+disequality `a ≠ zero` (not the `ℚ` display), so both the statement and the
+proof are choice-free. -/
+theorem mul_recip_cancel₀ {a : PRCRat} (h : a ≠ zero) :
+    mul a (recip a) = one := by
+  revert h
+  refine Quot.induction_on a (fun q => ?_)
+  intro h
+  -- The structural hypothesis descends to the representative: a balanced
+  -- (zero) numerator would place the class in the zero class.
+  have hz : ¬ SignedOrbit.balanced q.num SignedOrbit.zero := by
+    intro hb
+    apply h
+    show mk q = mk RatioOrbit.zero
+    apply mk_eq_mk_of_crossEq
+    rw [RatioOrbit.crossEq_iff_toIntCross]
+    have h0 : q.num.toInt = 0 := by
+      have h1 := (SignedOrbit.balanced_iff_toInt_eq
+        q.num SignedOrbit.zero).mp hb
+      rwa [SignedOrbit.zero_toInt] at h1
+    rw [h0, zero_num_toInt, Int.zero_mul, Int.zero_mul]
+  have hne : q.num.toInt ≠ 0 := by
+    intro h0
+    apply hz
+    rw [SignedOrbit.balanced_iff_toInt_eq, SignedOrbit.zero_toInt]
+    exact h0
+  show mk (RatioOrbit.mul q (RatioOrbit.recip q)) = mk RatioOrbit.one
+  apply mk_eq_mk_of_crossEq
+  rw [RatioOrbit.crossEq_iff_toIntCross]
+  unfold RatioOrbit.mul RatioOrbit.recip
+  rw [dif_neg hz]
+  simp only [RatioOrbit.recipNonzero, SignedOrbit.mul_toInt,
+    DistinctionNat.toNat_mul, one_num_toInt, one_den_toNat]
+  by_cases hf : q.num.nonnegFlag = true
+  · -- Positive numerator: the reciprocal numerator is the promoted denominator.
+    have hpos : 0 < q.num.toInt := by
+      have := (SignedOrbit.nonnegFlag_eq_true_iff q.num).mp hf
+      omega
+    rw [if_pos hf, SignedOrbit.ofOrbit_toInt]
+    push_cast
+    have haa : ((q.num.abs.toNat : ℕ) : ℤ) = q.num.toInt := by
+      rw [SignedOrbit.abs_toNat]
+      omega
+    rw [haa]
+    ring
+  · -- Negative numerator: the reciprocal numerator is the negated denominator.
+    have hf' : q.num.nonnegFlag = false := by
+      cases hv : q.num.nonnegFlag with
+      | false => rfl
+      | true => exact absurd hv hf
+    have hneg : q.num.toInt < 0 :=
+      (SignedOrbit.nonnegFlag_eq_false_iff q.num).mp hf'
+    rw [if_neg hf, SignedOrbit.negate_toInt, SignedOrbit.ofOrbit_toInt]
+    push_cast
+    have haa : ((q.num.abs.toNat : ℕ) : ℤ) = -q.num.toInt := by
+      rw [SignedOrbit.abs_toNat]
+      omega
+    rw [haa]
+    ring
+
+/-- K4.12. Structural reciprocal cancellation, inverse side. -/
+theorem recip_mul_cancel₀ {a : PRCRat} (h : a ≠ zero) :
+    mul (recip a) a = one := by
+  rw [mul_comm]
+  exact mul_recip_cancel₀ h
+
+/-- K4.12. The reciprocal fixes the zero class (the `ℚ` convention
+`0⁻¹ = 0`), proved structurally: the zero representative's numerator
+balances the zero orbit, so `RatioOrbit.recip` takes its zero branch. -/
+theorem recip_zero : recip zero = zero := by
+  show mk (RatioOrbit.recip RatioOrbit.zero) = mk RatioOrbit.zero
+  have h : SignedOrbit.balanced (RatioOrbit.zero).num SignedOrbit.zero :=
+    SignedOrbit.balanced_refl SignedOrbit.zero
+  unfold RatioOrbit.recip
+  rw [dif_pos h]
+
+/-- K4.12. Display-form reciprocal cancellation, kept for `ℚ`-facing API
+compatibility. The statement mentions `toRat`, so it is intrinsically
+display-bound; the structural content is `mul_recip_cancel₀`. -/
 theorem mul_recip_cancel {a : PRCRat} (h : a.toRat ≠ 0) :
     mul a (recip a) = one := by
-  apply toRat_injective
-  rw [toRat_mul, toRat_recip, one_toRat]
-  field_simp [h]
+  apply mul_recip_cancel₀
+  intro hz
+  apply h
+  rw [hz, zero_toRat]
 
 /-! ### Operation instances on PRCRat -/
 

@@ -1,30 +1,43 @@
 import ActualMathematics.IntegerRational
 import ActualMathematics.IntegerOrder
 import ActualMathematics.Grow.RatioOrbitLeReflTotal
+import ActualMathematics.Grow.SignedOrbitOrderChoiceFree
 
 namespace ActualMathematics.PRCGrow.RatioOrbitOrderAddMono
 
 open ActualMathematics
 open ActualMathematics.PRCGrow.RatioOrbitLeReflTotal
+open ActualMathematics.PRCGrow.SignedOrbitOrderChoiceFree
 
+/-- Choice-free unfold of `toInt` to its pos/neg Nat-cast difference. -/
+private lemma toInt_eq (a : SignedOrbit) :
+    a.toInt = (a.pos.toNat : ℤ) - (a.neg.toNat : ℤ) := by
+  cases a with
+  | mk pos neg => exact SignedOrbit.toInt_mk pos neg
+
+/-- Choice-free Int order bridge, routed through the CF Nat bridge `le_iff_toNat_cf`
+    (never through the choice-tainted `SignedOrbit.le_iff_toInt_le`). -/
+private lemma le_iff_toInt_le_cf (a b : SignedOrbit) :
+    SignedOrbit.le a b ↔ a.toInt ≤ b.toInt := by
+  rw [le_iff_toNat_cf, toInt_eq a, toInt_eq b]
+  constructor
+  · intro hh; omega
+  · intro hh; omega
+
+/-- Translation invariance of the delta-native ratio order: the order on `RatioOrbit`
+    is compatible with addition. -/
 theorem leQ_add_right (p q r : RatioOrbit) (h : leQ p q) :
     leQ (RatioOrbit.add p r) (RatioOrbit.add q r) := by
   unfold leQ at h ⊢
-  rw [SignedOrbit.le_iff_toInt_le] at h ⊢
-  simp only [SignedOrbit.scaleByNat_toInt, SignedOrbit.mul_toInt,
-             SignedOrbit.ofOrbit_toInt] at h
+  rw [le_iff_toInt_le_cf] at h ⊢
   unfold RatioOrbit.add
-  simp only [SignedOrbit.scaleByNat_toInt, SignedOrbit.mul_toInt,
-             SignedOrbit.ofOrbit_toInt, SignedOrbit.add_toInt,
-             DistinctionNat.toNat_mul]
-  push_cast
-  rw [← Int.sub_nonneg]
-  have key : (q.num.toInt * ↑(r.den.toNat) + r.num.toInt * ↑(q.den.toNat)) * (↑(p.den.toNat) * ↑(r.den.toNat)) -
-      (p.num.toInt * ↑(r.den.toNat) + r.num.toInt * ↑(p.den.toNat)) * (↑(q.den.toNat) * ↑(r.den.toNat)) =
-      (q.num.toInt * ↑(p.den.toNat) - p.num.toInt * ↑(q.den.toNat)) * (↑(r.den.toNat) * ↑(r.den.toNat)) := by
-    ring
-  rw [key]
-  exact Int.mul_nonneg (by rw [Int.sub_nonneg]; exact h)
-    (Int.mul_nonneg (by omega) (by omega))
+  simp only [SignedOrbit.mul_toInt, SignedOrbit.ofOrbit_toInt, SignedOrbit.scaleByNat_toInt,
+             SignedOrbit.add_toInt, DistinctionNat.toNat_mul] at h ⊢
+  push_cast at h ⊢
+  rw [← Int.sub_nonneg] at h ⊢
+  have hc : (0:ℤ) ≤ (r.den.toNat : ℤ) * (r.den.toNat : ℤ) :=
+    Int.mul_nonneg (by omega) (by omega)
+  have hprod := Int.mul_nonneg h hc
+  convert hprod using 1 <;> ring
 
 end ActualMathematics.PRCGrow.RatioOrbitOrderAddMono
