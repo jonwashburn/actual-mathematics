@@ -47,6 +47,7 @@ import ActualMathematics.FiniteCertificateTransfer
 import ActualMathematics.FormalSystem
 import ActualMathematics.GenerableReal
 import ActualMathematics.Grow.DeltaForcedNoEnumeration
+import ActualMathematics.Grow.EtaCompletionM0a
 import ActualMathematics.Grow.ForcedTrichotomy
 import ActualMathematics.Grow.IntegerDivisibility
 import ActualMathematics.Grow.RatioOrbitArchimedean
