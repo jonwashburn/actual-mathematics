@@ -326,6 +326,30 @@ theorem representable_subtype {X : Type u}
   obtain ⟨rX⟩ := hX
   exact ⟨rX.subtype p⟩
 
+/-! ### The decidable base: finite types carry explicit decoders -/
+
+/-- Decoder for the two-element type. -/
+def reprBool : Representation Bool where
+  decode n := if n = 0 then some false else if n = 1 then some true else none
+  complete x := by
+    cases x with
+    | false => exact ⟨0, rfl⟩
+    | true => exact ⟨1, rfl⟩
+
+/-- Decoder for the one-element type. -/
+def reprUnit : Representation Unit where
+  decode _ := some ()
+  complete _ := ⟨0, rfl⟩
+
+/-- Decoder for `Fin n`: codes below `n` are valid. -/
+def reprFin (n : ℕ) : Representation (Fin n) where
+  decode m := if h : m < n then some ⟨m, h⟩ else none
+  complete x := ⟨x.val, by rw [dif_pos x.isLt]⟩
+
+theorem representable_bool : DeltaRepresentable Bool := ⟨reprBool⟩
+theorem representable_unit : DeltaRepresentable Unit := ⟨reprUnit⟩
+theorem representable_fin (n : ℕ) : DeltaRepresentable (Fin n) := ⟨reprFin n⟩
+
 /-! ### The diagonal at the definition (choice-free) -/
 
 /-- **The diagonal hits the repaired definition.** The binary sequences carry
