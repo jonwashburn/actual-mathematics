@@ -113,5 +113,12 @@ theorem wlpo_and_markov_imp_lpo (hw : WLPO) (hm : MarkovPrinciple) : LPO := by
   · exact Or.inl hall
   · exact Or.inr (hm α hne)
 
+/-- **The exact location of LPO**: `LPO ⇔ WLPO ∧ Markov`. The two coordinates
+are the global bit (WLPO) and the terminating search (Markov); full omniscience
+is exactly their conjunction. Choice-free. -/
+theorem lpo_iff_wlpo_and_markov : LPO ↔ (WLPO ∧ MarkovPrinciple) :=
+  ⟨fun h => ⟨lpo_imp_wlpo h, lpo_imp_markov h⟩,
+   fun ⟨hw, hm⟩ => wlpo_and_markov_imp_lpo hw hm⟩
+
 end Omniscience
 end ActualMathematics
