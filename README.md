@@ -62,6 +62,34 @@ Mathematics is what distinction permits.
   positive root of `x² = x + 1` over the integer ring ℤ[φ] (no `Real.sqrt`, no choice),
   the 8-tick clock with its minimal period, the 16-tick spinor double cover, and the
   dimension pin `2^D = 8 ↔ D = 3`, all with `#print axioms ⊆ {propext, Quot.sound}`.
+- **The δ-kernel** (`ActualMathematics/DeltaKernel/*`): a small proof-checking kernel for
+  intuitionistic first-order Heyting arithmetic whose checker co-computes a **posit
+  ledger**: every use of a classical principle (excluded middle `em`, limited omniscience
+  `lpo`, Markov `mp`) and of full induction is recorded on the certificate. Graded
+  soundness (`sound_forced`, choice-free: a derivation with an empty ledger is true in ℕ
+  with no classical axioms consumed by the verification itself), plus the σ machinery and
+  a Gödel-street test corpus (`add_comm` certified end to end).
+- **Rigidity of the base, and the Universal Ledger program**
+  (`ActualMathematics/Rigidity/*`): the theorems that make the forcing spectrum σ(T) a
+  measure worth trusting.
+  * `BaseInitiality`: `DistinctionNat` is a Lawvere natural-number object: the initial
+    δ-algebra, Dedekind-categorical among Peano models, with a UNIQUE isomorphism to any
+    such model (`base_rigidity`, choice-free).
+  * `LedgerTransport`: the Transport Lemma. A kernel-certified theorem transports along
+    the base isomorphism to ANY Peano model at zero additional posit cost
+    (`transport_forced`, `transport_graded`), so σ is not encoding-relative.
+  * `LedgerInitiality`: the algebra of posit gradings (`ReducesTo`, `PositGrading`,
+    `SoundGrading`, `GradingHom`) with the chain chart and the honest OPEN targets.
+  * `InstanceLedger`: the instance-level ledger `usedInstances` (the multiset of posit
+    instances a derivation actually consumes), the coherence lemma `check_support` (the
+    Boolean ledger is exactly its support), and the two-price certificate
+    `emTriv_two_price` (one theorem, two accepted certificates at different prices: the
+    Boolean chart can overstate).
+  * `GraftCut`: weakening (`check_append`) and splicing (`splice`) for derivations,
+    yielding `reducesTo_trans`: kernel-interderivability is a genuine preorder.
+  * `ChainWitnesses`: the explicit derivation tree `lpoFromEM` showing LPO reduces to EM
+    inside the object calculus (`lpo_reduces_to_em`).
+  All Rigidity theorems audit choice-free (`#print axioms ⊆ {propext, Quot.sound}`).
 - **The continuum tax** (`ActualMathematics/ContinuumTax`, with `RealLineNonNativity` for
   the cardinality teeth): renormalization as accounting on the continuum purchase. A
   UV-divergent cutoff display carries no finite certificate; every renormalization scheme's
