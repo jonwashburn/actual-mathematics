@@ -43,8 +43,7 @@ encoding. Nothing here claims it.
 Everything verified by `decide` against the executable checker. No Mathlib.
 -/
 
-namespace ActualMathematics
-namespace DeltaKernel
+namespace ActualMathematics.DeltaKernel
 namespace GodelTest
 
 open DTerm DFormula Examples
@@ -264,5 +263,4 @@ Both exports must be choice-free (no `Classical.choice`): the kernel's
 #print axioms add_comm_full_certified
 
 end GodelTest
-end DeltaKernel
-end ActualMathematics
+end ActualMathematics.DeltaKernel

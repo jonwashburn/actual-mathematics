@@ -23,8 +23,7 @@ Contents:
 No Mathlib. Imports only the kernel's own syntax.
 -/
 
-namespace ActualMathematics
-namespace DeltaKernel
+namespace ActualMathematics.DeltaKernel
 
 /-- Environments: de Bruijn valuations into the canonical model ℕ. -/
 def Env : Type := Nat → Nat
@@ -328,5 +327,4 @@ theorem sat_stepSucc (φ : DFormula) (n : Nat) (ρ : Env) :
 
 end DFormula
 
-end DeltaKernel
-end ActualMathematics
+end ActualMathematics.DeltaKernel

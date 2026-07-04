@@ -31,8 +31,7 @@ checker: the kernel, not the host's proof search, is what accepts these
 trees. No Mathlib.
 -/
 
-namespace ActualMathematics
-namespace DeltaKernel
+namespace ActualMathematics.DeltaKernel
 namespace Examples
 
 open DTerm DFormula
@@ -194,5 +193,4 @@ metatheory plumbing) but never `Classical.choice`. This is the kernel's
 #print axioms zero_add_certified
 
 end Examples
-end DeltaKernel
-end ActualMathematics
+end ActualMathematics.DeltaKernel

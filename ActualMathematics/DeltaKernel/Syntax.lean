@@ -20,8 +20,7 @@ manipulation).
 This module imports nothing beyond the Lean prelude. No Mathlib.
 -/
 
-namespace ActualMathematics
-namespace DeltaKernel
+namespace ActualMathematics.DeltaKernel
 
 /-- Terms over the distinction signature: de Bruijn variables, zero,
 successor (the distinction step), addition, multiplication.
@@ -120,5 +119,4 @@ def stepSucc (φ : DFormula) : DFormula :=
 
 end DFormula
 
-end DeltaKernel
-end ActualMathematics
+end ActualMathematics.DeltaKernel

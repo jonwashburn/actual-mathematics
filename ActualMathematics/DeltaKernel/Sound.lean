@@ -38,8 +38,7 @@ No Mathlib: only the kernel's own modules and core Lean. This keeps the
 choice-free claim about `sound_forced` maximally trustworthy.
 -/
 
-namespace ActualMathematics
-namespace DeltaKernel
+namespace ActualMathematics.DeltaKernel
 
 open DTerm DFormula
 
@@ -695,5 +694,4 @@ its own soundness: the FORCED fragment is certified without omniscience. -/
 
 #print axioms sound_classical
 
-end DeltaKernel
-end ActualMathematics
+end ActualMathematics.DeltaKernel

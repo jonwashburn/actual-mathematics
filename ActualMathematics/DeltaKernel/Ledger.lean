@@ -27,8 +27,7 @@ Booleans so that `union` and "empty ledger means every sub-ledger is empty"
 are decidable structural facts, not list bookkeeping.
 -/
 
-namespace ActualMathematics
-namespace DeltaKernel
+namespace ActualMathematics.DeltaKernel
 
 /-- The posit-and-tier ledger. Fields `em`, `lpo`, `mp` are POSITS (named
 classical/omniscience principles consumed). Field `indFull` is a TIER marker:
@@ -154,5 +153,4 @@ theorem union_isForced (a b : Ledger) :
 
 end Ledger
 
-end DeltaKernel
-end ActualMathematics
+end ActualMathematics.DeltaKernel

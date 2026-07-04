@@ -29,8 +29,7 @@ syntactic scan. Consequences:
 Everything here is choice-free structural recursion. No Mathlib.
 -/
 
-namespace ActualMathematics
-namespace DeltaKernel
+namespace ActualMathematics.DeltaKernel
 
 /-- The syntactic σ-scan: compute the ledger by folding over the derivation
 TREE, ignoring contexts and conclusions entirely. Posit constructors
@@ -599,5 +598,4 @@ theorem conditional_ledger_syntactic {Γ : Ctx} {d : Deriv} {φ : DFormula}
     {O : Ledger} (h : Conditional Γ d φ O) : O = scanLedger d :=
   scan_eq_check h
 
-end DeltaKernel
-end ActualMathematics
+end ActualMathematics.DeltaKernel

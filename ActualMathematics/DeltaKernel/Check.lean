@@ -29,8 +29,7 @@ without a complete sub-tree, so an incomplete derivation is simply an
 ill-formed tree and the checker rejects it.
 -/
 
-namespace ActualMathematics
-namespace DeltaKernel
+namespace ActualMathematics.DeltaKernel
 
 open DTerm DFormula
 
@@ -220,5 +219,4 @@ def Forced (Γ : Ctx) (d : Deriv) (φ : DFormula) : Prop :=
 def Conditional (Γ : Ctx) (d : Deriv) (φ : DFormula) (O : Ledger) : Prop :=
   check Γ d = some (φ, O)
 
-end DeltaKernel
-end ActualMathematics
+end ActualMathematics.DeltaKernel
