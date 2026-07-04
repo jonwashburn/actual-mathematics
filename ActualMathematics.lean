@@ -7,6 +7,7 @@
 import ActualMathematics.AllDimensionalCubicalBoundary
 import ActualMathematics.Basic
 import ActualMathematics.BornRuleForced
+import ActualMathematics.BornRuleQuadratic
 import ActualMathematics.CalibrationOmniscience
 import ActualMathematics.CertifiedAnalyticProtocols
 import ActualMathematics.CertifiedAnalyticTransformers
