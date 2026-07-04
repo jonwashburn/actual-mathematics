@@ -10,82 +10,58 @@ open ActualMathematics.PRCGrow.RatioOrbitLeReflTotal
 open ActualMathematics.PRCGrow.RatioOrbitLtTrichotomy
 
 theorem ltQ_recipNonzero_pos (p : RatioOrbit)
-    (h : ¬ SignedOrbit.balanced p.num SignedOrbit.zero) :
-    ltQ RatioOrbit.zero p → ltQ RatioOrbit.zero (RatioOrbit.recipNonzero p h) := by
-  intro hlt
-  unfold ltQ at hlt ⊢
+    (h : ¬ SignedOrbit.balanced p.num SignedOrbit.zero)
+    (hlt : ltQ RatioOrbit.zero p) :
+    ltQ RatioOrbit.zero (RatioOrbit.recipNonzero p h) := by
+  -- Destructure hlt : ltQ 0 p into leQ 0 p and ¬ crossEq 0 p
+  unfold ltQ at hlt
   obtain ⟨hle, hne⟩ := hlt
-
-  -- Basic facts
-  have hzero_num : RatioOrbit.zero.num = SignedOrbit.zero := rfl
-  have hzero_den_ne : RatioOrbit.zero.den ≠ DistinctionNat.zero := by
-    intro hc
-    have hh := RatioOrbit.den_toNat_ne_zero RatioOrbit.zero
-    rw [hc] at hh
-    exact hh rfl
-  have hzc : (RatioOrbit.zero.den.toNat : ℤ) ≠ 0 := by
-    have := RatioOrbit.den_toNat_ne_zero RatioOrbit.zero; omega
-
-  -- p.num.toInt ≠ 0 directly from h
-  have hne_num : p.num.toInt ≠ 0 := by
-    intro hz
-    apply h
-    rw [SignedOrbit.balanced_iff_toInt_eq, SignedOrbit.zero_toInt]
-    exact hz
-
-  -- p.num.nonnegFlag = true, hence 0 ≤ p.num.toInt
+  -- Facts about RatioOrbit.zero
+  have h0num : (RatioOrbit.zero).num.toInt = 0 := by
+    show SignedOrbit.zero.toInt = 0
+    exact SignedOrbit.zero_toInt
+  have h0den : (RatioOrbit.zero).den.toNat = 1 := by decide
+  -- From hle : leQ 0 p, derive 0 ≤ p.num.toInt via the integer bridge
   unfold leQ at hle
-  have hbalzero : SignedOrbit.balanced
-      (SignedOrbit.mul RatioOrbit.zero.num (SignedOrbit.ofOrbit p.den)) SignedOrbit.zero := by
-    apply SignedOrbit.mul_balanced_zero_of_balanced_zero_left
-    exact (SignedOrbit.balanced_iff_toInt_eq RatioOrbit.zero.num SignedOrbit.zero).mpr
-      (by rw [hzero_num])
-  have hle2 := (SignedOrbit.le_congr_left_of_balanced hbalzero).mp hle
-  have hflagY : (SignedOrbit.mul p.num (SignedOrbit.ofOrbit RatioOrbit.zero.den)).nonnegFlag = true :=
-    (SignedOrbit.zero_le_iff_nonnegFlag _).mp hle2
-  have hflag : p.num.nonnegFlag = true := by
-    rw [SignedOrbit.nonnegFlag_mul_ofOrbit_right_of_ne_zero p.num RatioOrbit.zero.den hzero_den_ne]
-      at hflagY
-    exact hflagY
-  have hnonneg : 0 ≤ p.num.toInt := (SignedOrbit.nonnegFlag_eq_true_iff p.num).mp hflag
+  rw [SignedOrbit.le_iff_toInt_le] at hle
+  first
+  | rw [SignedOrbit.scaleByNat_toInt, SignedOrbit.scaleByNat_toInt] at hle
+  | rw [SignedOrbit.mul_toInt, SignedOrbit.mul_toInt,
+        SignedOrbit.ofOrbit_toInt, SignedOrbit.ofOrbit_toInt] at hle
+  rw [h0num, h0den] at hle
+  -- From hne : ¬ crossEq 0 p, derive p.num.toInt ≠ 0 via the integer cross bridge
+  rw [RatioOrbit.crossEq_iff_toIntCross] at hne
+  rw [h0num, h0den] at hne
+  -- Combine to get 0 < p.num.toInt
   have hpos : 0 < p.num.toInt := by omega
-
-  -- recip.num = ofOrbit p.den
-  have hrecip_num : (RatioOrbit.recipNonzero p h).num = SignedOrbit.ofOrbit p.den := by
-    unfold RatioOrbit.recipNonzero
-    exact if_pos hflag
+  -- Hence p.num.nonnegFlag = true
+  have hflag : p.num.nonnegFlag = true :=
+    (SignedOrbit.nonnegFlag_eq_true_iff p.num).mpr (by omega)
+  -- Rewrite the if in recipNonzero to get (recipNonzero p h).num = ofOrbit p.den
+  -- whose toInt = p.den.toNat, which is > 0
   have hrecip_toInt : (RatioOrbit.recipNonzero p h).num.toInt = (p.den.toNat : ℤ) := by
-    rw [hrecip_num, SignedOrbit.ofOrbit_toInt]
-
-  refine ⟨?_, ?_⟩
-
-  -- Goal 1 : leQ 0 recip
-  · unfold leQ
-    have hbalzero1 : SignedOrbit.balanced
-        (SignedOrbit.mul RatioOrbit.zero.num
-          (SignedOrbit.ofOrbit (RatioOrbit.recipNonzero p h).den)) SignedOrbit.zero := by
-      apply SignedOrbit.mul_balanced_zero_of_balanced_zero_left
-      exact (SignedOrbit.balanced_iff_toInt_eq RatioOrbit.zero.num SignedOrbit.zero).mpr
-        (by rw [hzero_num])
-    apply (SignedOrbit.le_congr_left_of_balanced hbalzero1).mpr
-    apply (SignedOrbit.zero_le_iff_nonnegFlag _).mpr
-    rw [SignedOrbit.nonnegFlag_mul_ofOrbit_right_of_ne_zero _ RatioOrbit.zero.den hzero_den_ne]
-    rw [hrecip_num]
-    apply (SignedOrbit.nonnegFlag_eq_true_iff _).mpr
-    rw [SignedOrbit.ofOrbit_toInt]
-    omega
-
-  -- Goal 2 : ¬ crossEq 0 recip
-  · rw [RatioOrbit.crossEq_iff_toIntCross]
-    rw [hzero_num, SignedOrbit.zero_toInt]
-    simp only [Int.zero_mul]
-    rw [hrecip_toInt]
-    intro hcontra
-    have hmul : (0 : ℤ) * (RatioOrbit.zero.den.toNat : ℤ)
-        = (p.den.toNat : ℤ) * (RatioOrbit.zero.den.toNat : ℤ) := by
-      rw [Int.zero_mul]; exact hcontra
-    have heq := Int.eq_of_mul_eq_mul_right hzc hmul
+    unfold RatioOrbit.recipNonzero
+    first
+    | rw [if_pos hflag, SignedOrbit.ofOrbit_toInt]
+    | (simp only [if_pos hflag]; rw [SignedOrbit.ofOrbit_toInt])
+  have hden_pos : (p.den.toNat : ℤ) > 0 := by
     have := RatioOrbit.den_toNat_ne_zero p
+    omega
+  -- Prove ltQ 0 recip = leQ 0 recip ∧ ¬ crossEq 0 recip
+  unfold ltQ
+  refine ⟨?_, ?_⟩
+  -- leQ 0 recip via le_iff_toInt_le: reduces to 0 ≤ p.den.toNat
+  · unfold leQ
+    rw [SignedOrbit.le_iff_toInt_le]
+    first
+    | rw [SignedOrbit.scaleByNat_toInt, SignedOrbit.scaleByNat_toInt]
+    | rw [SignedOrbit.mul_toInt, SignedOrbit.mul_toInt,
+          SignedOrbit.ofOrbit_toInt, SignedOrbit.ofOrbit_toInt]
+    rw [h0num, h0den, hrecip_toInt]
+    omega
+  -- ¬ crossEq 0 recip via crossEq_iff_toIntCross: reduces to p.den.toNat ≠ 0
+  · rw [RatioOrbit.crossEq_iff_toIntCross]
+    rw [h0num, h0den, hrecip_toInt]
     omega
 
 end ActualMathematics.PRCGrow.RatioOrbitRecipPos

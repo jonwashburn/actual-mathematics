@@ -27,6 +27,7 @@ import ActualMathematics.DeltaNativeStrongClosure
 import ActualMathematics.DeltaProbability
 import ActualMathematics.DeltaReal
 import ActualMathematics.DeltaRealCalibration
+import ActualMathematics.DeltaSpine.GoldenInt
 import ActualMathematics.FRSCarrier
 import ActualMathematics.FRSComplexAmplitude
 import ActualMathematics.Factorization.ChartTransition
@@ -49,9 +50,11 @@ import ActualMathematics.FiniteCertificateTransfer
 import ActualMathematics.FormalSystem
 import ActualMathematics.GenerableReal
 import ActualMathematics.Grow.DeltaForcedNoEnumeration
+import ActualMathematics.Grow.EightTickSpinor
 import ActualMathematics.Grow.EtaCompletionM0a
 import ActualMathematics.Grow.ForcedTrichotomy
 import ActualMathematics.Grow.IntegerDivisibility
+import ActualMathematics.Grow.PhiUniquePosRoot
 import ActualMathematics.Grow.RatioOrbitArchimedean
 import ActualMathematics.Grow.RatioOrbitDenseMediant
 import ActualMathematics.Grow.RatioOrbitDensity
@@ -77,6 +80,7 @@ import ActualMathematics.Grow.SignedOrbitLeOfProductRightFactorIffOfBalancedChoi
 import ActualMathematics.Grow.SignedOrbitLeProductRightFactorIffOfBalancedChoiceFree
 import ActualMathematics.Grow.SignedOrbitMulBalancedZeroOfBalancedZeroRightChoiceFree
 import ActualMathematics.Grow.SignedOrbitNonnegFlagMulOfOrbitRightOfNeZeroChoiceFree
+import ActualMathematics.Grow.SignedOrbitNonnegFlagSubIffLeChoiceFree
 import ActualMathematics.Grow.SignedOrbitOrderChoiceFree
 import ActualMathematics.Grow.SignedOrbitZeroLeIffNonnegFlagChoiceFree
 import ActualMathematics.HardProblemCertificateAudits

@@ -54,8 +54,14 @@ Mathematics is what distinction permits.
   subtype, and sum.
 - **The omniscience calibration** (`ActualMathematics/Omniscience`): `LPO`, `WLPO`,
   `LLPO`, and Markov's principle stated over `ℕ → Bool`, with the choice-free hierarchy
-  (`LPO ⇒ WLPO`, `LPO ⇒ LLPO`, `LPO ⇒ Markov`, `WLPO ∧ Markov ⇒ LPO`). These are the units
-  in which the strength of a completeness posit is measured.
+  (`LPO ⇒ WLPO`, `LPO ⇒ LLPO`, `LPO ⇒ Markov`, and the exact location
+  `LPO ⇔ WLPO ∧ Markov`). These are the units in which the strength of a completeness
+  posit is measured.
+- **The physical spine, choice-free** (`ActualMathematics/Grow/PhiUniquePosRoot`,
+  `Grow/EightTickSpinor`, `DeltaSpine/GoldenInt`): the golden ratio as the unique
+  positive root of `x² = x + 1` over the integer ring ℤ[φ] (no `Real.sqrt`, no choice),
+  the 8-tick clock with its minimal period, the 16-tick spinor double cover, and the
+  dimension pin `2^D = 8 ↔ D = 3`, all with `#print axioms ⊆ {propext, Quot.sound}`.
 - **The continuum tax** (`ActualMathematics/ContinuumTax`, with `RealLineNonNativity` for
   the cardinality teeth): renormalization as accounting on the continuum purchase. A
   UV-divergent cutoff display carries no finite certificate; every renormalization scheme's
