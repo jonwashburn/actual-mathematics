@@ -6,6 +6,8 @@
 -/
 import ActualMathematics.AllDimensionalCubicalBoundary
 import ActualMathematics.Basic
+import ActualMathematics.BornRuleForced
+import ActualMathematics.CalibrationOmniscience
 import ActualMathematics.CertifiedAnalyticProtocols
 import ActualMathematics.CertifiedAnalyticTransformers
 import ActualMathematics.ChoicePrinciples
@@ -132,6 +134,7 @@ import ActualMathematics.RealNullSetoid
 import ActualMathematics.RealOrderCongruence
 import ActualMathematics.RealProductContinuity
 import ActualMathematics.RecognizerBridge
+import ActualMathematics.Representability
 import ActualMathematics.SameDiff
 import ActualMathematics.Strength
 import ActualMathematics.TraceClosure
