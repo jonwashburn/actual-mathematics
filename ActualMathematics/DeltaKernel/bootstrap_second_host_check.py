@@ -145,17 +145,32 @@ def one_plus_one() -> EqSubst:
     )
 
 
+def malformed_one_plus_one() -> EqSubst:
+    """Same claimed conclusion, with a deliberately wrong equality premise."""
+    tree = one_plus_one()
+    return EqSubst(
+        hole=tree.hole,
+        t=tree.t,
+        s=tree.s,
+        proof_eq=EqRefl(Zero()),
+        proof_hole=tree.proof_hole,
+    )
+
+
 def main() -> int:
     result = check(one_plus_one())
     expected = Eq(Add(ONE, ONE), TWO)
-    ok = result == (expected, "empty")
+    accepts_valid = result == (expected, "empty")
+    rejects_malformed = check(malformed_one_plus_one()) is None
+    ok = accepts_valid and rejects_malformed
     print(
         {
             "host": "python-delta-checker",
             "tree": "onePlusOne",
-            "accepted": ok,
+            "accepted_valid": accepts_valid,
+            "rejected_malformed": rejects_malformed,
             "result": None if result is None else (str(result[0]), result[1]),
-            "agrees_with_lean_forced_empty_ledger": ok,
+            "agrees_with_lean_forced_empty_ledger": accepts_valid,
         }
     )
     return 0 if ok else 1

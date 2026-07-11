@@ -1,18 +1,25 @@
 import ActualMathematics.DeltaKernel.BootstrapDerived
+import ActualMathematics.DeltaKernel.BootstrapRealizations
 import ActualMathematics.Orbit
 
 /-!
-# Bootstrap B5: host invariance for the licensed term signature
+# Bootstrap B5: host invariance
 
 Initiality supplies a unique structure map out of `DTerm` into every
-`TermAlgebra`. Instantiating two independent carriers — Lean's `Nat` and
-the δ-orbit `DistinctionNat` — yields a unique interpretation of closed
-δ numerals in each host. Changing the host representation of the carrier
-therefore cannot change the meaning of closed δ terms.
+`TermAlgebra`. Instantiating two independent carriers, Lean's `Nat` and
+the directly implemented `List Unit` arithmetic, gives a canonical
+length/replication isomorphism. `host_validity_iff` proves that translation
+preserves and reflects satisfaction of every δ formula. Empty-ledger
+certificates are sound in both.
+
+`DistinctionNat` is retained below as the internal orbit realization of closed
+numerals. It is not counted as the independent host because it shares the Lean
+implementation and uses the same structural fold.
 
 A second-host executable checker (Python) lives beside this module and
 must agree on the forced `1+1=2` tree; that agreement is an empirical
-receipt for checker portability, not a Lean theorem.
+receipt for checker portability, not a Lean theorem and not a proof of full
+checker equivalence.
 -/
 
 namespace ActualMathematics.DeltaKernel.Bootstrap
@@ -107,15 +114,21 @@ theorem host_invariance_unique_dist
 /-- B5 package. -/
 def BootstrapHostInvarianceSpec : Prop :=
   TermSyntaxInitial ∧
+  IndependentRealizationSpec ∧
+  (∀ φ : DFormula, NatValid φ ↔ ListValid φ) ∧
   (∀ n, transportClosed (foldTerm natAlgebra (DTerm.ofNat n)) =
       foldTerm distinctionAlgebra (DTerm.ofNat n)) ∧
   (∀ f g : TermHom termSyntax natAlgebra, f = g) ∧
   (∀ f g : TermHom termSyntax distinctionAlgebra, f = g)
 
 theorem bootstrap_host_invariance : BootstrapHostInvarianceSpec :=
-  ⟨term_syntax_initial, host_invariance_numerals,
+  ⟨term_syntax_initial,
+   independent_realizations,
+   host_validity_iff,
+   host_invariance_numerals,
    host_invariance_unique_nat, host_invariance_unique_dist⟩
 
+#print axioms host_validity_iff
 #print axioms bootstrap_host_invariance
 
 end ActualMathematics.DeltaKernel.Bootstrap

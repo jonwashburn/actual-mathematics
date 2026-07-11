@@ -301,6 +301,30 @@ theorem listSat_iff_sat :
         have hx : x.length = n := by simp [x]
         exact ⟨x, (ih (hρ.cons n x hx)).mpr hn⟩
 
+/-- Closed observational truth in the direct natural semantics. -/
+def NatValid (φ : DFormula) : Prop :=
+  ∀ ρN : Env, DFormula.sat ρN φ
+
+/-- Closed observational truth in the independently written list semantics. -/
+def ListValid (φ : DFormula) : Prop :=
+  ∀ ρL : ListEnv, listSat ρL φ
+
+/-- Canonical host translation preserves and reflects truth of every formula.
+This is the observational equivalence used by the bootstrap theorem. -/
+theorem host_validity_iff (φ : DFormula) :
+    NatValid φ ↔ ListValid φ := by
+  constructor
+  · intro hN ρL
+    let ρN : Env := fun i => (ρL i).length
+    have hρ : EnvRelated ρN ρL := fun _ => rfl
+    exact (listSat_iff_sat φ hρ).mpr (hN ρN)
+  · intro hL ρN
+    let ρL : ListEnv := fun i => List.replicate (ρN i) ()
+    have hρ : EnvRelated ρN ρL := by
+      intro i
+      simp [ρL]
+    exact (listSat_iff_sat φ hρ).mp (hL ρL)
+
 /-- Every empty-ledger certificate is true in the independently written list
 semantics. -/
 theorem sound_forced_list {d : Deriv} {φ : DFormula}
@@ -327,6 +351,7 @@ def IndependentRealizationSpec : Prop :=
   Function.Bijective natToListHom.map ∧
   (∀ (φ : DFormula) (ρN : Env) (ρL : ListEnv),
     EnvRelated ρN ρL → (listSat ρL φ ↔ DFormula.sat ρN φ)) ∧
+  (∀ φ : DFormula, NatValid φ ↔ ListValid φ) ∧
   (∀ (d : Deriv) (φ : DFormula), Forced [] d φ →
     (∀ ρN : Env, DFormula.sat ρN φ) ∧
       (∀ ρL : ListEnv, listSat ρL φ))
@@ -337,6 +362,7 @@ theorem independent_realizations : IndependentRealizationSpec :=
    singletonDeltaAlgebra_not_peano,
    natToListHom_bijective,
    fun φ _ _ hρ => listSat_iff_sat φ hρ,
+   host_validity_iff,
    fun _ _ h => forced_true_in_both h⟩
 
 #print axioms listDeltaAlgebra_peano
@@ -348,6 +374,7 @@ theorem independent_realizations : IndependentRealizationSpec :=
 #print axioms evalList_length
 #print axioms natToListHom_bijective
 #print axioms listSat_iff_sat
+#print axioms host_validity_iff
 #print axioms sound_forced_list
 #print axioms independent_realizations
 
