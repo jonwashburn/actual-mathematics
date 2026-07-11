@@ -1,21 +1,32 @@
 import ActualMathematics.DeltaKernel.BootstrapInitiality
 import ActualMathematics.DeltaKernel.Examples
+import ActualMathematics.IntegerRational
+import ActualMathematics.OrbitArithmetic
 
 /-!
 # Bootstrap B2: internal arithmetic from the licensed δ signature
 
 From the frozen syntax and its initiality, the recursion equations for `+`
 and `·` hold in the canonical model, numerals evaluate correctly, and the
-kernel exports concrete arithmetic theorems with empty ledger.
+kernel exports concrete arithmetic theorems with empty ledger.  The existing
+δ-orbit constructions then supply quotient-derived integers and rationals.
 
 Metatheory remains Lean. Object-level arithmetic is the content of the
 checked derivations and their canonical evaluation, not a second copy of
 `Nat` smuggled into the object language.
+
+Classification:
+* `0` and `S` are licensed primitive term constructors.
+* `+` and `·` are licensed recursion operations whose equations are checked.
+* `DistinctionNat` is the initial orbit carrier, defined in the metatheory.
+* `PRCInt` is quotient-derived from pairs of orbit naturals.
+* `PRCRat` is quotient-derived from nonzero-denominator pairs of PRC integers.
 -/
 
 namespace ActualMathematics.DeltaKernel.Bootstrap
 
 open ActualMathematics.DeltaKernel
+open ActualMathematics
 open DTerm DFormula
 
 /-! ## Numeral evaluation -/
@@ -65,7 +76,38 @@ theorem zero_add_forced :
       some (.all (.eq (.add .zero (.var 0)) (.var 0)), .empty) :=
   Examples.zeroAdd_forced
 
-/-- B2 package: numerals, recursion equations, and forced kernel exports. -/
+/-! ## Quotient-derived integer and rational carriers -/
+
+theorem prcInt_display_injective :
+    Function.Injective PRCInt.toInt :=
+  PRCInt.toInt_injective
+
+theorem prcInt_add_display (a b : PRCInt) :
+    PRCInt.toInt (PRCInt.add a b) =
+      PRCInt.toInt a + PRCInt.toInt b :=
+  PRCInt.toInt_add a b
+
+theorem prcInt_mul_display (a b : PRCInt) :
+    PRCInt.toInt (PRCInt.mul a b) =
+      PRCInt.toInt a * PRCInt.toInt b :=
+  PRCInt.toInt_mul a b
+
+theorem prcRat_add_comm (a b : PRCRat) :
+    PRCRat.add a b = PRCRat.add b a :=
+  PRCRat.add_comm a b
+
+theorem prcRat_left_distrib (a b c : PRCRat) :
+    PRCRat.mul a (PRCRat.add b c) =
+      PRCRat.add (PRCRat.mul a b) (PRCRat.mul a c) :=
+  PRCRat.left_distrib a b c
+
+theorem prcRat_mul_recip_cancel {a : PRCRat}
+    (h : a ≠ PRCRat.zero) :
+    PRCRat.mul a (PRCRat.recip a) = PRCRat.one :=
+  PRCRat.mul_recip_cancel₀ h
+
+/-- B2 package: numerals, recursion equations, forced kernel exports, and
+the quotient-derived integer/rational tower. -/
 def BootstrapArithmeticSpec : Prop :=
   (∀ n ρ, (DTerm.ofNat n).eval ρ = n) ∧
   (∀ t ρ, (DTerm.add t .zero).eval ρ = t.eval ρ) ∧
@@ -78,12 +120,35 @@ def BootstrapArithmeticSpec : Prop :=
         (DTerm.add (DTerm.mul t s) t).eval ρ) ∧
   check [] Examples.onePlusOne =
       some (.eq (.add Examples.one Examples.one) Examples.two, .empty) ∧
-  (1 + 1 = 2)
+  (1 + 1 = 2) ∧
+  Function.Injective PRCInt.toInt ∧
+  (∀ a b : PRCInt,
+    PRCInt.toInt (PRCInt.add a b) =
+      PRCInt.toInt a + PRCInt.toInt b) ∧
+  (∀ a b : PRCInt,
+    PRCInt.toInt (PRCInt.mul a b) =
+      PRCInt.toInt a * PRCInt.toInt b) ∧
+  (∀ a b : PRCRat,
+    PRCRat.add a b = PRCRat.add b a) ∧
+  (∀ a b c : PRCRat,
+    PRCRat.mul a (PRCRat.add b c) =
+      PRCRat.add (PRCRat.mul a b) (PRCRat.mul a c)) ∧
+  (∀ a : PRCRat, a ≠ PRCRat.zero →
+    PRCRat.mul a (PRCRat.recip a) = PRCRat.one)
 
 theorem bootstrap_arithmetic : BootstrapArithmeticSpec :=
   ⟨eval_ofNat, eval_add_zero, eval_add_succ, eval_mul_zero, eval_mul_succ,
-   one_plus_one_internal, one_plus_one_exported⟩
+   one_plus_one_internal,
+   one_plus_one_exported,
+   prcInt_display_injective,
+   prcInt_add_display,
+   prcInt_mul_display,
+   prcRat_add_comm,
+   prcRat_left_distrib,
+   fun a h => prcRat_mul_recip_cancel (a := a) h⟩
 
+#print axioms prcInt_display_injective
+#print axioms prcRat_mul_recip_cancel
 #print axioms bootstrap_arithmetic
 
 end ActualMathematics.DeltaKernel.Bootstrap
