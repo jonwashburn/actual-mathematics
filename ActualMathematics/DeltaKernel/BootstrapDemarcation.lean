@@ -77,6 +77,25 @@ theorem not_all_types_physically_real : NotAllTypesPhysicallyReal := by
   intro h
   exact not_deltaForced_real (h ℝ)
 
+/-! ### Coarseness witnesses (adversarial honesty)
+
+The demarcation predicate is a countability cut, and it is deliberately
+coarse: every subtype of ℕ passes it, including types with no δ-generation
+story. We state the counterexamples ourselves so no exclusivity reading can
+survive. The positive δ-generation content of the bootstrap lives in the
+explicit tower constructions (`BootstrapTowerExport`), never in this
+predicate. An exclusive generation-closure predicate (`TowerGen`) is the
+named next derivation, not part of this claim. -/
+
+/-- Coarseness witness: `Fin (n+1)` passes the cut with no δ story. -/
+theorem physicallyReal_fin (n : ℕ) : PhysicallyReal (Fin (n + 1)) :=
+  ⟨⟨Fin.val, Fin.val_injective⟩⟩
+
+/-- Coarseness witness: every subtype of ℕ passes the cut, whatever `P` is. -/
+theorem all_nat_subtypes_physically_real (P : ℕ → Prop) :
+    PhysicallyReal {n : ℕ // P n} :=
+  ⟨⟨Subtype.val, Subtype.val_injective⟩⟩
+
 /-- F1 package. -/
 structure BootstrapDemarcationSpec : Prop where
   physically_real_iff : ∀ X : Type, PhysicallyReal X ↔ DeltaForced X
