@@ -11,8 +11,8 @@ as constructions on the forced arithmetic carrier.
 - Hereditarily finite sets are Ackermann codes denoted by closed δ numerals.
   Empty and adjunction provide formation; membership characterizations provide
   elimination; extensionality provides equality.
-- The two-element object is a subtype of existing δ terms whose canonical
-  forms are `0` and `S 0`.  It is not a fresh inductive object-language type.
+- The two-element object is a quotient of existing δ terms by their
+  zero/nonzero observation.  It is not a fresh inductive object-language type.
 
 Neither is an object-language primitive. Both are derived carriers with
 explicit formation, equality, substitution, and elimination theorems.  Lean's
@@ -68,20 +68,33 @@ theorem empty_ne_singletonEmpty :
   rw [← h] at hadj
   exact derivedHF_empty_elim emptyHF hadj
 
-/-! ## Two-element object from existing δ terms -/
+/-! ## Two-element quotient of existing δ terms -/
 
-/-- Canonical-form predicate for the derived two-element object. -/
-def IsDerivedTwoTerm (t : DTerm) : Prop :=
-  t = .zero ∨ t = .succ .zero
+/-- The sole observation retained by the two-point quotient. -/
+def twoObservation (t : DTerm) : Bool :=
+  if t.eval (fun _ => 0) = 0 then false else true
 
-/-- The carrier is a subtype of already licensed δ terms. -/
-def DerivedTwo : Type := {t : DTerm // IsDerivedTwoTerm t}
+/-- Terms are identified when their zero/nonzero observations agree. -/
+def twoEquivalent (t u : DTerm) : Prop :=
+  twoObservation t = twoObservation u
+
+theorem twoEquivalent_equivalence : Equivalence twoEquivalent where
+  refl := fun _ => rfl
+  symm := fun h => h.symm
+  trans := fun h₁ h₂ => h₁.trans h₂
+
+def derivedTwoSetoid : Setoid DTerm where
+  r := twoEquivalent
+  iseqv := twoEquivalent_equivalence
+
+/-- Quotient-derived two-element carrier.  No field assumes canonicity. -/
+def DerivedTwo : Type := Quot derivedTwoSetoid
 
 namespace DerivedTwo
 
-def absent : DerivedTwo := ⟨.zero, Or.inl rfl⟩
+def absent : DerivedTwo := Quot.mk derivedTwoSetoid DTerm.zero
 
-def present : DerivedTwo := ⟨.succ .zero, Or.inr rfl⟩
+def present : DerivedTwo := Quot.mk derivedTwoSetoid (DTerm.succ DTerm.zero)
 
 end DerivedTwo
 
@@ -89,25 +102,28 @@ def ofBool : Bool → DerivedTwo
   | false => DerivedTwo.absent
   | true => DerivedTwo.present
 
-def toBool (x : DerivedTwo) : Bool :=
-  if x.1 = DTerm.zero then false else true
+def toBool : DerivedTwo → Bool :=
+  Quot.lift twoObservation (fun _ _ h => h)
 
-/-- Canonical forms, obtained from the subtype predicate rather than a new
-inductive eliminator. -/
+/-- Canonical forms, proved by quotient induction and Boolean case analysis. -/
 theorem derivedTwo_canonicity (x : DerivedTwo) :
     x = DerivedTwo.absent ∨ x = DerivedTwo.present := by
-  rcases x.2 with h | h
-  · left
-    apply Subtype.ext
-    exact h
-  · right
-    apply Subtype.ext
-    exact h
+  induction x using Quot.ind with
+  | _ t =>
+      cases h : twoObservation t with
+      | false =>
+          left
+          apply Quot.sound
+          exact h
+      | true =>
+          right
+          apply Quot.sound
+          exact h
 
 theorem derivedTwo_no_confusion :
     DerivedTwo.absent ≠ DerivedTwo.present := by
   intro h
-  have hv := congrArg Subtype.val h
+  have hv := congrArg toBool h
   cases hv
 
 /-- Equality substitution law for predicates on the derived object. -/
