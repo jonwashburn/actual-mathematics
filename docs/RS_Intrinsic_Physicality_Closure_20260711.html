@@ -74,15 +74,15 @@
 </head>
 <body>
 <main>
-  <span class="tag">THEOREM: NO-GO + CAPACITY SATURATION</span>
+  <span class="tag">THEOREM: SATURATION INDEPENDENT OF CURRENT SURFACE</span>
   <h1>Generator 2: the exact boundary</h1>
   <p class="lede">
-    The current δ language cannot see the size of its multiplicative generator. Base 3,
-    base 3/2, and base φ execute exactly the same arithmetic truths as base 2 because equality
-    observes only whether J-cost is zero. The count side of the dial is forced: one distinction
-    has exactly two sides. Crossing that count into the real step size is capacity saturation,
-    the same species of residual as one-act calibration for the J-unit. Under saturation, Lean
-    forces gain 2. Without it, the no-go stands.
+    We tried to derive capacity saturation from recognition principles. It does not
+    follow. Floor card, OneAct cost-unit calibration, and generator-neutral process
+    laws all hold at base 3 and at φ, while saturation fails there. The missing law
+    is mixed-type: it must identify a real step size with a forced cardinal. That
+    residual is the same species as OneAct for the J-unit. Under it, gain 2 is
+    forced. Without it, the dial stays free.
   </p>
 
   <h2>First-principles brief</h2>
@@ -100,8 +100,10 @@
     <div class="step"><strong>Prove language-level blindness.</strong> <code>msatBaseGJ_generator_invariant</code> proves every δ formula has the same truth value on any two such generators. This is stronger than checking only generated theorems.</div>
     <div class="step"><strong>Refute unconditional uniqueness.</strong> <code>generator_two_not_derivable</code> proves the current process premises do not force 2. Base 3 is a complete countermodel; base 3/2 and φ prevent hidden integer restrictions.</div>
     <div class="step"><strong>Force the count side.</strong> <code>side_card</code> and <code>derivedTwo_card</code> prove one primitive distinction has exactly two outcomes. That is THEOREM from δ, not a chart choice.</div>
-    <div class="step"><strong>Name the residual as capacity saturation.</strong> <code>GainInstrument</code> is the OneAct twin: readout equals forced capacity, and multiplicative gain saturates to that readout.</div>
-    <div class="step receipt"><strong>Force 2 under saturation.</strong> <code>gainInstrument_forces_two</code> proves any such instrument has gain 2. Saturation, binary gain, free-history capacity, and first-step J-cost 1/4 are one gate.</div>
+    <div class="step"><strong>Assemble the current recognition surface.</strong> Neutral process laws, forced floor card, and OneAct unit forcing coexist at every <code>g &gt; 1</code>, including unsaturated bases.</div>
+    <div class="step"><strong>Refute derivation of saturation.</strong> <code>saturation_not_forced_by_recognition_surface</code> uses base 3 (and φ) as decoys: the surface holds, capacity saturation fails.</div>
+    <div class="step"><strong>Extract the mixed-type residual.</strong> <code>CardinalCoordinateIdentification</code> is the required law species: real gain equals forced cardinal. It is the OneAct twin for the dial.</div>
+    <div class="step receipt"><strong>Force 2 only under that residual.</strong> <code>gainInstrument_forces_two</code> proves saturation ⇒ gain 2. The NIL capacity clause that would discharge the residual is OPEN and currently unforced.</div>
   </div>
 
   <h2>The exact logical chain</h2>
@@ -148,16 +150,17 @@
   <h2>Scoped verdict</h2>
   <div class="card warning">
     <p><strong>Claim:</strong> CLOSED negative for uniqueness of generator 2 from the current Peano-generation, forced-J, J-zero-separation, and δ-transport premises.</p>
-    <p><strong>Domain:</strong> Positive real power orbits <code>1, g, g², ...</code> with <code>g &gt; 1</code>, observed by the current δ language.</p>
-    <p><strong>Premises:</strong> Existing δ checker soundness; the proved J-cost zero-locus and uniqueness conditions; standard Lean foundations <code>propext</code>, <code>Classical.choice</code>, and <code>Quot.sound</code>.</p>
-    <p><strong>Largest licensed claim:</strong> Every current δ formula and every checked δ theorem is generator-invariant across all real <code>g &gt; 1</code>. The current theorem surface cannot derive <code>g = 2</code>.</p>
-    <p><strong>Does not license:</strong> A claim that generator 2 is false, that no physical law can force it, or that a named instrument realizes any member of the family.</p>
+    <p><strong>Claim:</strong> CLOSED negative for deriving capacity saturation from the current recognition surface (neutral process + forced floor card + OneAct unit).</p>
+    <p><strong>Domain:</strong> Positive real power orbits <code>1, g, g², ...</code> with <code>g &gt; 1</code>, observed by the current δ language and OneAct cost-unit interface.</p>
+    <p><strong>Premises:</strong> Existing δ checker soundness; the proved J-cost zero-locus and uniqueness conditions; OneAct curvature unit forcing; standard Lean foundations <code>propext</code>, <code>Classical.choice</code>, and <code>Quot.sound</code>.</p>
+    <p><strong>Largest licensed claim:</strong> Every current δ formula is generator-invariant across all real <code>g &gt; 1</code>. Floor card and OneAct do not close the dial. The current theorem surface cannot derive <code>g = 2</code>.</p>
+    <p><strong>Does not license:</strong> A claim that generator 2 is false, that no future NIL capacity law can force it, or that a named instrument realizes any member of the family.</p>
   </div>
   <div class="card receipt" style="margin-top:14px">
-    <p><strong>Conditional claim:</strong> CLOSED positive under capacity saturation (<code>GainInstrument</code>).</p>
-    <p><strong>Residual:</strong> one recognition step saturates to the forced free-outcome capacity of one primitive distinction.</p>
-    <p><strong>Reach:</strong> saturation forces <code>gain = 2</code> and first-step J-cost <code>1/4</code>. It is equivalent to <code>RSBinaryGainBridge</code> and free-history capacity realization. The quarter-cost face requires <code>g &gt; 1</code>.</p>
-    <p><strong>Does not license:</strong> a claim that saturation was derived from δ/J alone, or that it is the unique weakest conceivable bridge.</p>
+    <p><strong>Constraint extracted:</strong> a mixed-type cardinal↔coordinate identification (<code>CardinalCoordinateIdentification</code> / <code>GainInstrument</code>).</p>
+    <p><strong>Conditional claim:</strong> CLOSED positive under that residual.</p>
+    <p><strong>Reach:</strong> saturation forces <code>gain = 2</code> and first-step J-cost <code>1/4</code>. Equivalent faces: binary gain bridge, free-history capacity, GainInstrument.</p>
+    <p><strong>OPEN with expected closure:</strong> <code>NilCapacityClauseTarget</code> — strengthen no-information-loss so charts with gain exceeding floor capacity are rejected. Currently unforced: base 3 is a surface model that exceeds capacity.</p>
   </div>
 
   <h2>Receipts</h2>
@@ -170,7 +173,9 @@
     <p>The panel selected the generator-gauge no-go route unanimously after debate and rejected the attempt to redefine <code>jTrace</code> by history cardinality as premise laundering.</p>
     <p>The post-implementation adversarial panel returned PASS with stable judge order. No declaration-level repair was required.</p>
     <p><code>lake build ActualMathematics.Physicality.RSGainCalibration</code>: PASS.</p>
-    <p><code>physical_gain_calibration_headline</code>: saturation forces 2, canonical witness exists, no-go on unsaturated charts remains.</p>
+    <p><code>saturation_not_forced_by_recognition_surface</code>: PASS (base-3 decoy).</p>
+    <p><code>nil_capacity_clause_not_forced_by_recognition_surface</code>: PASS (extracted OPEN target is currently unforced).</p>
+    <p><code>physical_gain_calibration_headline</code>: no-go + conditional force under residual + OPEN NIL capacity clause.</p>
   </div>
 
   <footer>
