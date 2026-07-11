@@ -144,6 +144,11 @@ import ActualMathematics.PRCOnePrimitive
 import ActualMathematics.PRCSetTheoryParse
 import ActualMathematics.PRCShrunkCertificate
 import ActualMathematics.PRCTypeTheoryParse
+import ActualMathematics.Physicality.Conservativity
+import ActualMathematics.Physicality.Countermodels
+import ActualMathematics.Physicality.DeltaTransport
+import ActualMathematics.Physicality.Institution
+import ActualMathematics.Physicality.Receipts
 import ActualMathematics.PhysicalOneActCalibration
 import ActualMathematics.PrimeAxisCoherence
 import ActualMathematics.QuantizedProofMethod

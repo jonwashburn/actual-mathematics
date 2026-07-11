@@ -1,0 +1,376 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Physicality Translation Theorem: Frozen Contract</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #0b0d10;
+      --panel: #14181d;
+      --ink: #edf1f5;
+      --muted: #9aa7b3;
+      --line: #2c343d;
+      --good: #72d6a0;
+      --warn: #f1c46d;
+      --bad: #ff8585;
+      --blue: #7fc8ff;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font: 16px/1.55 ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    main { max-width: 1080px; margin: 0 auto; padding: 48px 24px 80px; }
+    h1 { font-size: clamp(2rem, 5vw, 4.4rem); line-height: 1; margin: 0 0 18px; letter-spacing: -0.045em; }
+    h2 { margin: 42px 0 12px; font-size: 1.35rem; color: var(--blue); }
+    h3 { margin: 24px 0 8px; font-size: 1rem; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); }
+    p { max-width: 82ch; }
+    code, pre { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+    code { color: #b9e5ff; }
+    pre {
+      overflow: auto;
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: #0d1115;
+      font-size: .9rem;
+    }
+    .kicker { color: var(--good); font-weight: 700; text-transform: uppercase; letter-spacing: .12em; }
+    .lede { font-size: 1.25rem; color: #d8e1e8; max-width: 74ch; }
+    .grid { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+    .card {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 18px;
+      background: var(--panel);
+    }
+    .tag {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 999px;
+      font-size: .78rem;
+      font-weight: 750;
+      letter-spacing: .05em;
+      margin-right: 6px;
+    }
+    .theorem { background: #163525; color: var(--good); }
+    .conditional { background: #3a2e16; color: var(--warn); }
+    .open { background: #3b1f22; color: var(--bad); }
+    .model { background: #163143; color: var(--blue); }
+    ul, ol { padding-left: 1.35rem; }
+    li { margin: .45rem 0; }
+    .verdict {
+      border-left: 5px solid var(--good);
+      padding: 16px 18px;
+      background: #102118;
+      font-size: 1.08rem;
+    }
+    .alarm {
+      border-left: 5px solid var(--bad);
+      padding: 16px 18px;
+      background: #261416;
+    }
+    .receipt {
+      border-left: 5px solid var(--warn);
+      padding: 16px 18px;
+      background: #211b10;
+    }
+    .small { color: var(--muted); font-size: .9rem; }
+    a { color: var(--blue); }
+  </style>
+</head>
+<body>
+<main>
+  <div class="kicker">Frozen contract, 2026-07-11</div>
+  <h1>Physicality Translation Theorem</h1>
+  <p class="lede">
+    The theorem closes one precise capacity: a δ-kernel theorem whose checker spent
+    nothing can be read as true in every admitted Peano realization, with the original
+    checker equation still attached. Calling that target truth physical requires a
+    separate empirical receipt supplied from outside the proof kernel.
+  </p>
+
+  <div class="verdict">
+    <strong>Accepted scope.</strong> The formal result is a fixed-signature semantic
+    transport theorem for <code>DFormula</code>. It does not yet translate arbitrary
+    mathematical signatures, and it does not prove that nature supplies a realization.
+  </div>
+
+  <h2>First-principles brief</h2>
+  <div class="grid">
+    <section class="card">
+      <h3>Why</h3>
+      <p>
+        The δ bootstrap now has two pieces that should meet: proof-relevant construction
+        history and choice-free transport into every Peano model. Without a frozen
+        contract, “math becomes physical truth” admits fake proofs based on a target
+        semantics that declares everything true, an empty model family, or a receipt
+        written by the translator itself.
+      </p>
+    </section>
+    <section class="card">
+      <h3>Who</h3>
+      <p>
+        The immediate audience is a mathematician or proof tool that needs to know
+        exactly which theorem, construction, semantic model, and empirical premise are
+        being transported. The larger audience is the Physicality Grammar, where each
+        deposited edge must eventually carry the same information.
+      </p>
+    </section>
+    <section class="card">
+      <h3>Goal</h3>
+      <p>
+        Define the smallest institution-style kernel that preserves and reflects
+        satisfaction, package computed checker receipts and construction receipts,
+        require a nonempty externally attested target family, and prove the concrete
+        δ transport theorem.
+      </p>
+    </section>
+    <section class="card">
+      <h3>Success</h3>
+      <p>
+        Lean builds the new modules. Forced addition commutativity reaches both the
+        natural and list carriers. Seven hostile formulations fail for named reasons.
+        Axiom audits show that the forced transport core adds no
+        <code>Classical.choice</code>.
+      </p>
+    </section>
+    <section class="card">
+      <h3>Constraints</h3>
+      <p>
+        Existing Lean statements are authoritative. The target must prove the Peano
+        laws. The empirical bridge is a premise. The original checker equation is
+        retained verbatim. No theorem may inhabit the empirical existence target.
+      </p>
+    </section>
+  </div>
+
+  <h2>Premises challenged before implementation</h2>
+  <ol>
+    <li>
+      <strong>What is the strongest reason the framing is wrong?</strong>
+      The current semantic kernel speaks one arithmetic language,
+      <code>DFormula</code>. It cannot prove a theorem about all mathematical languages.
+      This implementation closes the arithmetic instance and exposes the interface that
+      later signatures must inhabit.
+    </li>
+    <li>
+      <strong>What is the smallest artifact that creates the capacity?</strong>
+      One satisfaction-equivalence translation, one model-expansion theorem, one
+      externally attested family type, and one δ instance built from
+      <code>msat_iff_sat</code>.
+    </li>
+    <li>
+      <strong>Which facts are known?</strong>
+      <code>sound_forced</code> proves canonical truth from an empty checker ledger.
+      <code>msat_iff_sat</code> preserves and reflects every formula in every Peano
+      model. <code>transport_forced</code> composes them without choice.
+    </li>
+    <li>
+      <strong>Which premise remains empirical?</strong>
+      Nature must supply evidence accepted by a separately specified authority for at
+      least one target realization. Lean checks uses of that evidence. Lean does not
+      certify the laboratory or issue the evidence.
+    </li>
+    <li>
+      <strong>What would produce motion without progress?</strong>
+      A metadata-only transport square, an equality of a receipt with itself, a family
+      indexed by an empty type, or a target satisfaction relation supplied by the
+      theorem author.
+    </li>
+    <li>
+      <strong>What must remain true after implementation?</strong>
+      The empty ledger stays empty, singleton collapse stays excluded, every target
+      quantifier covers its whole carrier, and source truth can be recovered from target
+      validity when every source model has a target expansion.
+    </li>
+    <li>
+      <strong>Does bare carrier equivalence preserve generation history?</strong>
+      No. The existing tower module proves that the even naturals receive a
+      <code>TowerGen</code> witness by equivalence. Construction provenance therefore
+      lives in the explicit stage, bundle, and <code>CoreTower</code> fields, not in the
+      bare proposition <code>TowerGen X</code>.
+    </li>
+    <li>
+      <strong>Can a tower receipt itself force a Peano target?</strong>
+      No. Tower receipts also cover the signed and fraction stages. Target Peano laws
+      remain a separate proof obligation. This rejects the adverse panel’s unstable
+      proposal to derive all target operations from an arbitrary tower receipt.
+    </li>
+    <li>
+      <strong>Can Lean distinguish honest external evidence from a dishonest
+      <code>True</code>-valued authority?</strong>
+      No. The kernel can prove that a false attestation relation has no receipts and that
+      an internal self-issued token does not work for every authority. Authenticity of
+      the authority is an empirical and operational premise.
+    </li>
+  </ol>
+
+  <h2>Frozen Lean contract</h2>
+  <p>
+    The generic layer separates syntax, semantics, and model reduction. The concrete
+    δ layer fixes the sentence map to identity.
+  </p>
+  <pre><code>structure Institution where
+  Sentence : Type
+  Model : Type
+  sat : Model → Sentence → Prop
+
+structure Translation (Src Tgt : Institution) where
+  sentence : Src.Sentence → Tgt.Sentence
+  reduct : Tgt.Model → Src.Model
+  satisfaction : ∀ M φ,
+    Tgt.sat M (sentence φ) ↔ Src.sat (reduct M) φ
+
+structure ModelExpansion (T : Translation Src Tgt) where
+  expand : Src.Model → Tgt.Model
+  reduct_expand : ∀ M, T.reduct (expand M) = M</code></pre>
+
+  <p>
+    A proof receipt is the checker equation itself. It is not reconstructed after
+    transport. A generated theorem carries the explicit construction object and the
+    empty-ledger certificate.
+  </p>
+  <pre><code>structure GeneratedObject where
+  stage : TowerStage
+  bundle : StageBundle stage
+  construction : CoreTower bundle
+
+structure ForcedTheorem where
+  derivation : Deriv
+  sentence : DFormula
+  checked : check [] derivation = some (sentence, Ledger.empty)
+
+structure GeneratedTheorem where
+  generated : GeneratedObject
+  certificate : ForcedTheorem</code></pre>
+
+  <p>
+    Empirical authority is parametric. A family must contain an index as data, so an
+    empty family cannot be constructed. Each member separately supplies its external
+    receipt.
+  </p>
+  <pre><code>structure EmpiricalAuthority (I : Institution) where
+  Evidence : I.Model → Type
+  accepts : ∀ M, Evidence M → Prop
+
+structure EmpiricalReceipt (A : EmpiricalAuthority I) (M : I.Model) where
+  evidence : A.Evidence M
+  accepted : A.accepts M evidence
+
+structure EmpiricalFamily (A : EmpiricalAuthority I) where
+  Index : Type
+  witness : Index
+  realization : Index → I.Model
+  receipt : ∀ i, EmpiricalReceipt A (realization i)</code></pre>
+
+  <p>
+    The δ target model stores a δ-algebra, its Peano proof, and a source environment.
+    Its satisfaction relation is the existing <code>msat</code>, never a caller-supplied
+    field.
+  </p>
+  <pre><code>structure PeanoWorld where
+  algebra : DeltaAlgebra
+  peano : IsPeanoModel algebra
+  env : Env
+
+def deltaTranslation : Translation deltaSource deltaTarget
+
+theorem universal_physicality_transport
+    (G : GeneratedTheorem)
+    (F : EmpiricalFamily A) :
+    ∀ i, PhysicalizedTheorem A G (F.realization i)</code></pre>
+
+  <h2>Scoped verdict</h2>
+  <div class="grid">
+    <section class="card">
+      <span class="tag theorem">THEOREM</span>
+      <p>
+        Every empty-ledger δ checker theorem is true under <code>msat</code> in every
+        Peano target, and the exact source checker equation remains in the transported
+        result.
+      </p>
+    </section>
+    <section class="card">
+      <span class="tag theorem">THEOREM</span>
+      <p>
+        Satisfaction equivalence blocks the translator that maps every source sentence
+        to truth. A target-model expansion for each source model implies semantic
+        conservativity.
+      </p>
+    </section>
+    <section class="card">
+      <span class="tag conditional">CONDITIONAL</span>
+      <p>
+        The phrase “physical truth” is licensed only for a target paired with an
+        accepted empirical receipt from the authority supplied to the theorem.
+      </p>
+    </section>
+    <section class="card">
+      <span class="tag open">OPEN</span>
+      <p>
+        Nature supplies such a receipt for a δ realization. No inhabitant of that claim
+        is added here.
+      </p>
+    </section>
+  </div>
+
+  <div class="receipt">
+    <strong>Largest licensed claim.</strong> Under an explicitly supplied empirical
+    authority and a nonempty family of receipted Peano realizations, every theorem
+    certified by the δ checker with the empty ledger is true in every family member,
+    with satisfaction reflected back to the canonical source semantics and the original
+    checker receipt unchanged.
+  </div>
+
+  <div class="alarm">
+    <strong>Does not license.</strong> It does not prove that every Lean type is actual,
+    that every semantic truth is provable, that every mathematical signature has a
+    physical translation, that a bare equivalence preserves native construction
+    history, that a weak constant-trace embedding is faithful, or that a physical
+    realization exists.
+  </div>
+
+  <h2>Adverse panel receipt</h2>
+  <p>
+    A fat panel reviewed <code>LedgerTransport.lean</code>, the tower receipt surface,
+    and <code>TransportSquare.lean</code>. The order audit returned
+    <code>INSTRUMENT-UNINFORMATIVE(order)</code>: the primary judge selected the
+    firewall design, while reversing candidate order selected the governance-sealed
+    design. The vote therefore supplies no stable winner.
+  </p>
+  <p>
+    The accepted contract uses the shared technical conclusions: fixed satisfaction
+    equivalence, a nonempty family, Peano target laws, proof-relevant source
+    construction, unchanged checker evidence, and an external empirical premise. It
+    rejects the unstable winner’s proposed <code>DeltaAlgebra.ofReceipt</code> step
+    because no such declaration exists and an arbitrary tower receipt may name the
+    integer or rational stage rather than a Peano realization.
+  </p>
+  <p class="small">
+    Panel label: <code>physicality_translation_contract_minimal</code>. The panel itself
+    is advice. Lean and the narrow Lake builds are the acceptance gate.
+  </p>
+
+  <h2>Acceptance checks</h2>
+  <ul>
+    <li><code>lake build ActualMathematics.Physicality.DeltaTransport</code> passes.</li>
+    <li><code>lake build ActualMathematics.Physicality.Countermodels</code> passes.</li>
+    <li>Forced addition commutativity reaches both the natural and list Peano worlds.</li>
+    <li>The True-collapse cannot inhabit <code>Translation</code> because it fails satisfaction reflection.</li>
+    <li>An empty index cannot inhabit <code>EmpiricalFamily</code>.</li>
+    <li>The singleton δ-algebra cannot inhabit <code>PeanoWorld</code>.</li>
+    <li>Even naturals expose bare-equivalence provenance loss.</li>
+    <li><code>Fin 17</code> is countable but has no tower-generation receipt.</li>
+    <li>A self-issued token cannot create evidence for an arbitrary authority.</li>
+    <li>The constant-trace PRC embedding exists but fails trace injectivity.</li>
+    <li>No new <code>sorry</code>, <code>admit</code>, <code>axiom</code>, or fake empirical inhabitant appears.</li>
+    <li>The forced transport core’s axiom footprint excludes <code>Classical.choice</code>.</li>
+  </ul>
+</main>
+</body>
+</html>
