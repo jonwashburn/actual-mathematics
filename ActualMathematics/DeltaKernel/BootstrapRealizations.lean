@@ -53,23 +53,22 @@ def listMul : ListNat → ListNat → ListNat
   | cons _ y ih =>
       simp [listMul, listAdd, ih, Nat.mul_succ]
 
+/-- Every list of `Unit` is the canonical repetition of its sole inhabitant. -/
+theorem listUnit_eq_replicate_length (x : ListNat) :
+    x = List.replicate x.length () := by
+  induction x with
+  | nil => rfl
+  | cons a x ih =>
+      cases a
+      exact congrArg (fun z : List Unit => () :: z) ih
+
 /-- Lists of `Unit` are determined by their length. -/
 theorem listUnit_eq_of_length_eq {x y : ListNat} (h : x.length = y.length) :
     x = y := by
-  induction x generalizing y with
-  | nil =>
-      cases y with
-      | nil => rfl
-      | cons _ y => simp at h
-  | cons a x ih =>
-      cases y with
-      | nil => simp at h
-      | cons b y =>
-          cases a
-          cases b
-          congr
-          apply ih
-          simpa using h
+  calc
+    x = List.replicate x.length () := listUnit_eq_replicate_length x
+    _ = List.replicate y.length () := congrArg (fun n => List.replicate n ()) h
+    _ = y := (listUnit_eq_replicate_length y).symm
 
 theorem listUnit_length_injective :
     Function.Injective (List.length : ListNat → Nat) :=
@@ -337,8 +336,8 @@ theorem independent_realizations : IndependentRealizationSpec :=
    listDeltaAlgebra_peano,
    singletonDeltaAlgebra_not_peano,
    natToListHom_bijective,
-   fun φ ρN ρL hρ => listSat_iff_sat φ hρ,
-   fun d φ h => forced_true_in_both h⟩
+   fun φ _ _ hρ => listSat_iff_sat φ hρ,
+   fun _ _ h => forced_true_in_both h⟩
 
 #print axioms listDeltaAlgebra_peano
 #print axioms singletonDeltaAlgebra_not_peano

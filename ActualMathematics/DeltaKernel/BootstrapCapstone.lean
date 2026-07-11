@@ -22,8 +22,7 @@ REACH: max licensed —
   * closed-term meaning is unique across Nat and DistinctionNat hosts
     (choice-free);
   * Nat and `List Unit` are independent Peano realizations with matching
-    forced truth (`independent_realizations`; currently pulls Classical.choice
-    through Mathlib list infrastructure — tagged separately).
+    forced truth (`independent_realizations`, choice-free).
 does NOT license:
   * "no metatheory";
   * absolute self-consistency;
@@ -48,9 +47,7 @@ theorem bootstrap_mechanism : BootstrapMechanism where
   derived := bootstrap_derived
   host_invariance := bootstrap_host_invariance
 
-/-- Extended package including the independent `List Unit` realization.
-This conjunct currently depends on `Classical.choice` via Mathlib list proofs;
-the choice-free core is `bootstrap_mechanism`. -/
+/-- Extended package including the independent `List Unit` realization. -/
 theorem bootstrap_mechanism_with_independent_realizations :
     BootstrapMechanism ∧ IndependentRealizationSpec :=
   ⟨bootstrap_mechanism, independent_realizations⟩
