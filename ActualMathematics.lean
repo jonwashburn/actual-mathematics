@@ -149,6 +149,7 @@ import ActualMathematics.Physicality.Countermodels
 import ActualMathematics.Physicality.DeltaTransport
 import ActualMathematics.Physicality.Institution
 import ActualMathematics.Physicality.Receipts
+import ActualMathematics.Physicality.RSDeltaClosure
 import ActualMathematics.PhysicalOneActCalibration
 import ActualMathematics.PrimeAxisCoherence
 import ActualMathematics.QuantizedProofMethod
