@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Paper plan: generator-gauge boundary for δ/J physicality</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --ink: #0d0d0c;
+      --paper: #f4f3ef;
+      --gray: #5b5953;
+      --line: #0d0d0c;
+      --ok: #0b7a3e;
+      --bad: #c8401f;
+      --gold: #ffc328;
+      --white: #ffffff;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: Inter, system-ui, sans-serif;
+      line-height: 1.45;
+    }
+    main {
+      max-width: 920px;
+      margin: 0 auto;
+      padding: 36px 22px 72px;
+    }
+    h1, h2, h3 {
+      font-family: "Archivo Black", Inter, sans-serif;
+      font-weight: 400;
+      letter-spacing: -0.02em;
+      margin: 0 0 12px;
+    }
+    h1 { font-size: clamp(1.8rem, 4vw, 2.6rem); max-width: 18ch; }
+    h2 { font-size: 1.25rem; margin-top: 34px; border-top: 2.5px solid var(--ink); padding-top: 14px; }
+    h3 { font-size: 1rem; margin-top: 18px; }
+    p, li, dd, dt { font-size: 0.98rem; }
+    .tag {
+      display: inline-block;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.72rem;
+      font-weight: 600;
+      border: 2.5px solid var(--ink);
+      background: var(--gold);
+      padding: 4px 8px;
+      margin-bottom: 14px;
+    }
+    .lede { font-size: 1.08rem; max-width: 62ch; margin: 0 0 22px; }
+    .card {
+      background: var(--white);
+      border: 2.5px solid var(--ink);
+      box-shadow: 8px 8px 0 var(--ink);
+      padding: 16px 18px;
+      margin: 14px 0;
+    }
+    .card.ok { border-color: var(--ok); }
+    .card.warn { border-color: var(--bad); }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 14px;
+    }
+    code, .mono {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.86em;
+    }
+    dl {
+      display: grid;
+      grid-template-columns: minmax(120px, 170px) 1fr;
+      gap: 8px 16px;
+      margin: 0;
+    }
+    dt { color: var(--gray); font-family: "JetBrains Mono", monospace; font-size: 0.78rem; font-weight: 600; }
+    dd { margin: 0; }
+    ol, ul { padding-left: 1.2rem; }
+    li + li { margin-top: 8px; }
+    .claimbox {
+      border-left: 8px solid var(--ink);
+      padding-left: 14px;
+      margin: 12px 0;
+    }
+    footer {
+      margin-top: 40px;
+      border-top: 2.5px solid var(--ink);
+      padding-top: 14px;
+      color: var(--gray);
+      font-size: 0.86rem;
+    }
+    @media (max-width: 640px) {
+      dl { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+<main>
+  <span class="tag">SUPERSEDED BY BANK · 2026-07-11</span>
+  <h1>Generator-gauge boundary for δ recognition physics</h1>
+  <p class="lede">
+    Do not treat this as an open paper lane to force base 2. The scientific
+    boundary is banked: distinction two-sidedness is already THEOREM; numeral
+    bases are arbitrary; multiplicative <code>g = 2</code> is not forced.
+    Canonical stop: <code>docs/RS_Three_Twos_Banked_20260711.html</code>.
+  </p>
+
+  <div class="card warn">
+    <p><strong>Banked stop.</strong> A paper that claims RS forces numeral base 2
+      or forces the multiplicative chart generator is out of scope and would
+      overclaim. Optional future note: publish the <em>no-go / three-2s split</em>
+      only, citing Lean receipts. That is demarcation, not a uniqueness win.</p>
+  </div>
+
+  <h2>Recommendation (updated)</h2>
+  <div class="card ok">
+    <p><strong>Default: do not open the paper.</strong> Bank the result and move on.</p>
+    <p>If Jon later wants a short demarcation note: 8–12 pages on the three-2s
+      split and <code>saturation_not_forced_by_recognition_surface</code>, with
+      honest tags. Not a “forced base 2” manuscript.</p>
+    <p>Optional bootstrap patch: one paragraph citing the no-go theorems beside
+      the existing prose disclaimer in
+      <code>papers/distinction-delta-bootstrap-20260711.tex</code>.</p>
+  </div>
+
+  <h2>Close-2 status</h2>
+  <div class="card warn">
+    <p>Opening a new paper lane. Jon’s explicit “go” overrides the gate for this
+      session. Standing close-2 tab remains open until two prior paper closures
+      in the same family are cited at draft start.</p>
+    <p class="mono">Opens: Generator_Gauge_Boundary_δ_J_20260711</p>
+    <p class="mono">Closes: TBD × 2 (same paper family) before first full draft lands, or keep standing tab.</p>
+  </div>
+
+  <h2>Working title options</h2>
+  <ol>
+    <li><strong>Preferred:</strong> Generator-gauge freedom in δ recognition arithmetic</li>
+    <li>When forced math does not force base 2</li>
+    <li>A no-go theorem for uniqueness of the multiplicative recognition step</li>
+  </ol>
+
+  <h2>Audience and venue</h2>
+  <div class="grid">
+    <section class="card">
+      <h3>Audience</h3>
+      <p>Formal mathematics + foundations readers who already accept machine-checked uniqueness results. Secondary: RS / Actual Mathematics users who need the exact licensed claim.</p>
+    </section>
+    <section class="card">
+      <h3>Venue shape</h3>
+      <p>Short note: Axioms / Mathematics style, or arXiv first as a companion to the δ bootstrap. Keep under 12 pages plus Lean appendix table.</p>
+    </section>
+    <section class="card">
+      <h3>Not the venue</h3>
+      <p>Do not pitch as an experimental physics paper. There is no instrument claim.</p>
+    </section>
+  </div>
+
+  <h2>Claim skeleton (only legal publishable claims)</h2>
+
+  <div class="claimbox">
+    <h3>Claim A · THEOREM · negative uniqueness</h3>
+    <dl>
+      <dt>CLAIM</dt><dd>CLOSED negative for uniqueness of multiplicative generator 2 from current Peano-generation, forced-J, J-zero-separation, and δ-transport premises.</dd>
+      <dt>DOMAIN</dt><dd>Positive real power orbits <code>1, g, g², …</code> with <code>g &gt; 1</code>, observed by the current δ language.</dd>
+      <dt>PREMISES</dt><dd>δ checker soundness; J uniqueness under named cost laws; equality decided by <code>J = 0</code>; Lean basis <code>propext</code>, <code>Classical.choice</code>, <code>Quot.sound</code>.</dd>
+      <dt>REACH</dt><dd>Every current δ formula / checked empty-ledger theorem is generator-invariant across all such <code>g</code>. Base 3, 3/2, and φ are complete decoys.</dd>
+      <dt>DOES NOT</dt><dd>Say generator 2 is false, unreal, or useless. Does not kill physical laws that can force 2.</dd>
+      <dt>LEAN</dt><dd><code>generator_two_not_derivable</code>, <code>msatBaseGJ_generator_invariant</code>, <code>base3_countermodel</code>, <code>baseThreeHalves_countermodel</code>, <code>basePhi_countermodel</code>, <code>generatorNeutralModel_iff_one_lt</code></dd>
+    </dl>
+  </div>
+
+  <div class="claimbox">
+    <h3>Claim B · THEOREM · intrinsic execution (already in bootstrap)</h3>
+    <dl>
+      <dt>CLAIM</dt><dd>CLOSED positive for execution of generated empty-ledger δ theorems on a fixed J-orbit recognition process.</dd>
+      <dt>DOMAIN</dt><dd>The base-two witness orbit in <code>RSDeltaClosure</code>.</dd>
+      <dt>REACH</dt><dd>Math is welded into a recognition process: terms use process operations; atomic equality is zero J-cost.</dd>
+      <dt>DOES NOT</dt><dd>Force that the witness base is unique.</dd>
+      <dt>LEAN</dt><dd><code>rs_generated_closure</code>, <code>msatJ_depends_only_on_zero_locus</code></dd>
+    </dl>
+  </div>
+
+  <div class="claimbox">
+    <h3>Claim C · CONDITIONAL THEOREM · binary-gain lock</h3>
+    <dl>
+      <dt>CLAIM</dt><dd>CLOSED positive for <code>g = 2</code> under an explicit capacity / gain identification.</dd>
+      <dt>BRIDGE</dt><dd><code>RSBinaryGainBridge</code>: one-step multiplicative gain equals the number of outcomes of the derived distinction carrier. Equivalent packaging: <code>GainInstrument</code> capacity saturation.</dd>
+      <dt>REACH</dt><dd>Forces <code>g = 2</code> and first-step cost <code>1/4</code> for <code>g &gt; 1</code>. Free-history cardinality is the same premise, not independent evidence.</dd>
+      <dt>DOES NOT</dt><dd>Derive the bridge from δ/J alone. Does not claim this is the unique weakest conceivable physical selector among all extensions.</dd>
+      <dt>LEAN</dt><dd><code>RSBinaryGainBridge</code>, <code>history_gain_quarter_triangle</code>, <code>gainInstrument_forces_two</code>, <code>physical_gain_calibration_headline</code></dd>
+    </dl>
+  </div>
+
+  <h2>One-sentence public abstract (draft)</h2>
+  <div class="card">
+    <p>
+      We prove that δ arithmetic executes inside a recognition process whose
+      equalities are decided by reciprocal cost, yet remains blind to the size
+      of its multiplicative step; uniqueness of base 2 requires an explicit
+      binary-gain identification equivalent to saturating one recognition step
+      to the two outcomes of a primitive distinction.
+    </p>
+  </div>
+
+  <h2>Section outline</h2>
+  <ol>
+    <li><strong>Setup.</strong> δ is base-neutral by design. Recognition process = orbit + successor ×g + J-equality.</li>
+    <li><strong>Weld.</strong> Claim B: generated theorems execute; J decides atoms; magnitude of J is invisible to the language.</li>
+    <li><strong>No-go.</strong> Claim A: full family for every <code>g &gt; 1</code>; decoys 3, 3/2, φ; formula-level invariance.</li>
+    <li><strong>Named lock.</strong> Claim C: binary-gain / capacity saturation; triangle of equivalent faces; anti-double-counting.</li>
+    <li><strong>What remains open.</strong> Derive the lock from RS rather than name it. No instrument claim.</li>
+    <li><strong>Lean appendix.</strong> Declaration table + axiom footprints.</li>
+  </ol>
+
+  <h2>Bootstrap paper patch (same day, small)</h2>
+  <div class="card">
+    <p>In §Native J-orbit closure, replace the prose disclaimer with a pointer:</p>
+    <ul>
+      <li>cite <code>generator_two_not_derivable</code> for the negative uniqueness theorem;</li>
+      <li>cite <code>RSBinaryGainBridge</code> / <code>GainInstrument</code> as the named conditional lock;</li>
+      <li>point to this companion note for the full countermodel family.</li>
+    </ul>
+    <p>Keep the bootstrap paper’s licensed content unchanged: intrinsic execution on the witness orbit.</p>
+  </div>
+
+  <h2>What not to write</h2>
+  <ul>
+    <li>“RS derives base 2 unconditionally.”</li>
+    <li>“φ as orbit generator is impossible.” φ is a live decoy under Claim A.</li>
+    <li>“First-step cost 1/4 independently confirms the bridge.” It is the same face.</li>
+    <li>“Least integer above 1” as if forced. That is another named selector, not proved from δ.</li>
+    <li>Any laboratory or RFAB realization claim.</li>
+  </ul>
+
+  <h2>Source artifacts</h2>
+  <dl>
+    <dt>Lean</dt>
+    <dd>
+      <code>ActualMathematics/Physicality/RSDeltaClosure.lean</code>,
+      <code>RSDeltaBaseCountermodel.lean</code>,
+      <code>RSGainCalibration.lean</code>,
+      <code>DeltaKernel/BootstrapDerived.lean</code>
+    </dd>
+    <dt>Human brief</dt>
+    <dd><code>docs/RS_Intrinsic_Physicality_Closure_20260711.html</code></dd>
+    <dt>Related paper</dt>
+    <dd><code>reality/papers/distinction-delta-bootstrap-20260711.tex</code> §ssec:rsdeltaclosure</dd>
+  </dl>
+
+  <h2>Done when</h2>
+  <ol>
+    <li>This plan’s claim skeleton matches Lean headers after a final read of the three modules.</li>
+    <li>Placement choice locked: companion note + bootstrap pointer.</li>
+    <li>Filename reserved under <code>reality/papers/</code>.</li>
+    <li>First draft starts only after claim A/B/C stay within REACH above.</li>
+  </ol>
+
+  <footer>
+    Plan date: 2026-07-11. Status: ready for draft authorization.
+    Provenance: Lean no-go + conditional bridge packet; adversarial panel PASS.
+    Refusal boundary: this file is a plan, not a theorem and not a submission.
+  </footer>
+</main>
+</body>
+</html>
