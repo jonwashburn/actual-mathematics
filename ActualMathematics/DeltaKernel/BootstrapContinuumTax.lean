@@ -31,6 +31,8 @@ structure BootstrapContinuumTaxSpec : Prop where
   hierarchy_lpo_wlpo : Omniscience.LPO → Omniscience.WLPO
   /-- Hierarchy: LPO ⇒ LLPO. -/
   hierarchy_lpo_llpo : Omniscience.LPO → Omniscience.LLPO
+  /-- Hierarchy: LPO ⇒ Markov's principle. -/
+  hierarchy_lpo_markov : Omniscience.LPO → Omniscience.MarkovPrinciple
   /-- Exact location: LPO ⇔ WLPO ∧ Markov. -/
   location_lpo :
     Omniscience.WLPO → Omniscience.MarkovPrinciple → Omniscience.LPO
@@ -44,6 +46,7 @@ theorem bootstrap_continuum_tax : BootstrapContinuumTaxSpec where
   dichotomy_llpo := calib_dichotomy_imp_llpo
   hierarchy_lpo_wlpo := Omniscience.lpo_imp_wlpo
   hierarchy_lpo_llpo := Omniscience.lpo_imp_llpo
+  hierarchy_lpo_markov := Omniscience.lpo_imp_markov
   location_lpo := Omniscience.wlpo_and_markov_imp_lpo
   continuum_is_purchase_tag := bootstrap_continuum_purchase
 

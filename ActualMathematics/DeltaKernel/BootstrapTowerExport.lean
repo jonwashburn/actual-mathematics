@@ -69,7 +69,7 @@ theorem deltaForced_natDelta : Forced.DeltaForced NatDelta :=
 /-- ℤδ is δ-forced: even/odd certificate after the injective quotient
 display. Choice-free. -/
 theorem deltaForced_intDelta : Forced.DeltaForced IntDelta :=
-  ⟨⟨fun z => intToNat (PRCInt.toInt z), fun a b h =>
+  ⟨⟨fun z => intToNat (PRCInt.toInt z), fun _ _ h =>
       PRCInt.toInt_injective (intToNat_inj h)⟩⟩
 
 /-! ### A choice-free certificate for ℚδ

@@ -19,10 +19,14 @@ PREMISES:
 REACH: max licensed:
   * ℕ, ℤ, ℚ are physically real / δ-forced / representable;
   * ℝ is not δ-forced (classicalExtension tag);
-  * bootstrap refuses any “all sets from δ” claim.
+  * bootstrap refuses the claim that every type is forced.
 does NOT license:
   * ZFC / CIC reconstruction;
   * that every countable type is ontologically forced by a bare act;
+  * EXCLUSIVITY: the demarcation predicate is a countability CUT, deliberately
+    coarse. Every subtype of ℕ passes it (witnesses below). Passing the cut
+    does not assert δ-generation; the positive δ-generation content lives in
+    the explicit tower constructions (F2), not in this predicate;
   * absolute consistency of the host.
 -/
 
@@ -63,12 +67,13 @@ theorem bootstrap_demarcation :
       (PhysicallyReal ℕ ∧ PhysicallyReal ℤ ∧ PhysicallyReal ℚ ∧ ¬ PhysicallyReal ℝ) where
   holds := demarcation
 
-/-- Explicit refusal: δ does not force every set/type construction. -/
-def NotZFCReplication : Prop :=
+/-- Exact negative boundary: the certificate class does not contain every Lean type.
+This does not by itself rule out a coded interpretation of a formal set theory. -/
+def NotAllTypesPhysicallyReal : Prop :=
   ¬ (∀ (X : Type), PhysicallyReal X)
 
-/-- Witness against “derive all sets”: ℝ is a named non-forced type. -/
-theorem not_all_types_physically_real : NotZFCReplication := by
+/-- The classical real line witnesses the exact boundary above. -/
+theorem not_all_types_physically_real : NotAllTypesPhysicallyReal := by
   intro h
   exact not_deltaForced_real (h ℝ)
 
@@ -86,7 +91,7 @@ structure BootstrapDemarcationSpec : Prop where
   demarcation :
       Tagged StrengthTag.classicalExtension
         (PhysicallyReal ℕ ∧ PhysicallyReal ℤ ∧ PhysicallyReal ℚ ∧ ¬ PhysicallyReal ℝ)
-  refuses_zfc_replication : NotZFCReplication
+  not_all_types_physically_real : NotAllTypesPhysicallyReal
 
 theorem bootstrap_demarcation_spec : BootstrapDemarcationSpec where
   physically_real_iff := physicallyReal_eq_deltaForced
@@ -94,7 +99,7 @@ theorem bootstrap_demarcation_spec : BootstrapDemarcationSpec where
   representable_tower := bootstrap_representable_tower
   continuum_purchase := bootstrap_continuum_purchase
   demarcation := bootstrap_demarcation
-  refuses_zfc_replication := not_all_types_physically_real
+  not_all_types_physically_real := not_all_types_physically_real
 
 #print axioms bootstrap_forced_tower
 #print axioms bootstrap_representable_tower

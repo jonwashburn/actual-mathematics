@@ -37,8 +37,11 @@ REACH: max licensed:
     extensions priced at WLPO/LPO/LLPO, and the same claim stated by the
     IndisputableMonolith PublicSpine.
 does NOT license:
-  * ZFC / CIC reconstruction ("derive all sets" is refused by
-    `not_all_types_physically_real`);
+  * ZFC / CIC reconstruction;
+  * the claim that every Lean type is physically real
+    (`not_all_types_physically_real` proves the exact negative);
+  * the stronger claim that the countability cut alone rules out coded
+    interpretations of formal set theories;
   * a choice-free proof of ¬`DeltaForced ℝ`;
   * absolute consistency of the host;
   * any physical claim beyond the demarcation predicate itself.
