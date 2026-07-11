@@ -151,6 +151,7 @@ import ActualMathematics.Physicality.Institution
 import ActualMathematics.Physicality.Receipts
 import ActualMathematics.Physicality.RSDeltaBaseCountermodel
 import ActualMathematics.Physicality.RSDeltaClosure
+import ActualMathematics.Physicality.RSGainCalibration
 import ActualMathematics.PhysicalOneActCalibration
 import ActualMathematics.PrimeAxisCoherence
 import ActualMathematics.QuantizedProofMethod

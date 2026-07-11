@@ -74,14 +74,15 @@
 </head>
 <body>
 <main>
-  <span class="tag">THEOREM: NO-GO + CONDITIONAL BRIDGE</span>
+  <span class="tag">THEOREM: NO-GO + CAPACITY SATURATION</span>
   <h1>Generator 2: the exact boundary</h1>
   <p class="lede">
     The current δ language cannot see the size of its multiplicative generator. Base 3,
     base 3/2, and base φ execute exactly the same arithmetic truths as base 2 because equality
-    observes only whether J-cost is zero. Under the explicit physical bridge formalized here,
-    generator 2 becomes unique because one-step gain is identified with the two outcomes of the
-    derived distinction. Lean now proves both sides, so the boundary cannot be hidden again.
+    observes only whether J-cost is zero. The count side of the dial is forced: one distinction
+    has exactly two sides. Crossing that count into the real step size is capacity saturation,
+    the same species of residual as one-act calibration for the J-unit. Under saturation, Lean
+    forces gain 2. Without it, the no-go stands.
   </p>
 
   <h2>First-principles brief</h2>
@@ -98,8 +99,9 @@
     <div class="step"><strong>Build every positive generator.</strong> For each real <code>g &gt; 1</code>, Lean constructs the orbit <code>1, g, g², ...</code>, proves it is Peano-shaped, and proves J-cost separates its stages.</div>
     <div class="step"><strong>Prove language-level blindness.</strong> <code>msatBaseGJ_generator_invariant</code> proves every δ formula has the same truth value on any two such generators. This is stronger than checking only generated theorems.</div>
     <div class="step"><strong>Refute unconditional uniqueness.</strong> <code>generator_two_not_derivable</code> proves the current process premises do not force 2. Base 3 is a complete countermodel; base 3/2 and φ prevent hidden integer restrictions.</div>
-    <div class="step"><strong>Name the missing physical statement.</strong> <code>RSBinaryGainBridge g</code> says one recognition step gains exactly as many states as the derived distinction has outcomes.</div>
-    <div class="step receipt"><strong>Force 2 conditionally and exactly.</strong> Under that bridge, <code>g = 2</code>. Free-history cardinality and first-step J-cost 1/4 are proved equivalent forms of the same gate.</div>
+    <div class="step"><strong>Force the count side.</strong> <code>side_card</code> and <code>derivedTwo_card</code> prove one primitive distinction has exactly two outcomes. That is THEOREM from δ, not a chart choice.</div>
+    <div class="step"><strong>Name the residual as capacity saturation.</strong> <code>GainInstrument</code> is the OneAct twin: readout equals forced capacity, and multiplicative gain saturates to that readout.</div>
+    <div class="step receipt"><strong>Force 2 under saturation.</strong> <code>gainInstrument_forces_two</code> proves any such instrument has gain 2. Saturation, binary gain, free-history capacity, and first-step J-cost 1/4 are one gate.</div>
   </div>
 
   <h2>The exact logical chain</h2>
@@ -111,8 +113,9 @@
       <dt>Semantics</dt><dd><code>msatBaseGJ_iff_sat</code> proves complete agreement with canonical δ satisfaction for every formula and every variable assignment.</dd>
       <dt>No-go</dt><dd><code>generator_two_not_derivable</code> uses the base-3 stage model to refute uniqueness from those premises.</dd>
       <dt>Derived count</dt><dd><code>derivedTwo_card</code> proves the quotient-derived distinction has two outcomes. <code>freeDistinctionHistory_card</code> proves free length-<em>n</em> histories have cardinality <code>2^n</code>.</dd>
-      <dt>Physical bridge</dt><dd><code>RSBinaryGainBridge g</code> identifies the positive-real one-step gain with that derived outcome count. This is a named physical interpretation, not a theorem of the generator-neutral language.</dd>
-      <dt>Conditional closure</dt><dd><code>binary_gain_bridge_iff_two</code>, <code>binary_gain_bridge_iff_quarter_cost</code>, and <code>history_gain_quarter_triangle</code>.</dd>
+      <dt>Count side</dt><dd><code>side_card</code> / <code>derivedTwo_card</code>: forced two-outcome floor.</dd>
+      <dt>Residual</dt><dd><code>GainInstrument</code>: capacity saturation. Same logical species as <code>OneActInstrument</code> for the cost unit. Not discharged by δ/J alone.</dd>
+      <dt>Conditional closure</dt><dd><code>gainInstrument_forces_two</code>, <code>physical_gain_calibration_headline</code>, and the existing history/gain/quarter triangle.</dd>
     </dl>
   </div>
 
@@ -151,10 +154,10 @@
     <p><strong>Does not license:</strong> A claim that generator 2 is false, that no physical law can force it, or that a named instrument realizes any member of the family.</p>
   </div>
   <div class="card receipt" style="margin-top:14px">
-    <p><strong>Conditional claim:</strong> CLOSED positive under <code>RSBinaryGainBridge</code>.</p>
-    <p><strong>Bridge:</strong> one-step multiplicative gain equals the number of outcomes in the quotient-derived distinction carrier.</p>
-    <p><strong>Reach:</strong> the bridge forces <code>g = 2</code> and first-step J-cost <code>1/4</code>. Free-history cardinality is an equivalent statement of the same bridge. The quarter-cost equivalence requires <code>g &gt; 1</code>; over all positive reals, <code>g = 1/2</code> has the same J-cost.</p>
-    <p><strong>Does not license:</strong> a claim that this bridge is the unique weakest physical premise among every conceivable extension.</p>
+    <p><strong>Conditional claim:</strong> CLOSED positive under capacity saturation (<code>GainInstrument</code>).</p>
+    <p><strong>Residual:</strong> one recognition step saturates to the forced free-outcome capacity of one primitive distinction.</p>
+    <p><strong>Reach:</strong> saturation forces <code>gain = 2</code> and first-step J-cost <code>1/4</code>. It is equivalent to <code>RSBinaryGainBridge</code> and free-history capacity realization. The quarter-cost face requires <code>g &gt; 1</code>.</p>
+    <p><strong>Does not license:</strong> a claim that saturation was derived from δ/J alone, or that it is the unique weakest conceivable bridge.</p>
   </div>
 
   <h2>Receipts</h2>
@@ -166,12 +169,15 @@
     <p><code>history_gain_quarter_triangle</code> proves free-history realization, binary gain, and quarter-cost are equivalent faces of one extra gate.</p>
     <p>The panel selected the generator-gauge no-go route unanimously after debate and rejected the attempt to redefine <code>jTrace</code> by history cardinality as premise laundering.</p>
     <p>The post-implementation adversarial panel returned PASS with stable judge order. No declaration-level repair was required.</p>
+    <p><code>lake build ActualMathematics.Physicality.RSGainCalibration</code>: PASS.</p>
+    <p><code>physical_gain_calibration_headline</code>: saturation forces 2, canonical witness exists, no-go on unsaturated charts remains.</p>
   </div>
 
   <footer>
     Implementation date: 2026-07-11. Sources of truth:
-    <code>ActualMathematics/Physicality/RSDeltaClosure.lean</code> and
-    <code>ActualMathematics/Physicality/RSDeltaBaseCountermodel.lean</code>.
+    <code>ActualMathematics/Physicality/RSDeltaClosure.lean</code>,
+    <code>ActualMathematics/Physicality/RSDeltaBaseCountermodel.lean</code>, and
+    <code>ActualMathematics/Physicality/RSGainCalibration.lean</code>.
   </footer>
 </main>
 </body>
