@@ -150,6 +150,35 @@ theorem derivedTwo_roundtrip (x : DerivedTwo) : ofBool (toBool x) = x := by
   · subst x
     rfl
 
+/-- The quotient-derived distinction carrier is exactly Boolean. This is an
+equivalence theorem about the constructed quotient, not a new primitive type. -/
+def derivedTwoEquivBool : DerivedTwo ≃ Bool where
+  toFun := toBool
+  invFun := ofBool
+  left_inv := derivedTwo_roundtrip
+  right_inv := by
+    intro b
+    cases b <;> rfl
+
+noncomputable instance : Fintype DerivedTwo :=
+  Fintype.ofEquiv Bool derivedTwoEquivBool.symm
+
+/-- One primitive distinction has exactly two derived outcomes. -/
+@[simp] theorem derivedTwo_card :
+    Fintype.card DerivedTwo = 2 := by
+  rw [Fintype.card_congr derivedTwoEquivBool]
+  decide
+
+/-- The free length-`n` history object of successive primitive distinctions. -/
+abbrev FreeDistinctionHistory (n : ℕ) : Type :=
+  Fin n → DerivedTwo
+
+/-- Free histories grow with base two because each new distinction appends one
+of the two proved outcomes. -/
+@[simp] theorem freeDistinctionHistory_card (n : ℕ) :
+    Fintype.card (FreeDistinctionHistory n) = 2 ^ n := by
+  simp [FreeDistinctionHistory]
+
 /-- B4 package: set and type objects are code constructions with their laws,
 not additions to `DTerm` or `DFormula`. -/
 def BootstrapDerivedSpec : Prop :=
@@ -179,6 +208,8 @@ theorem bootstrap_derived : BootstrapDerivedSpec :=
 #print axioms derivedHF_extensionality
 #print axioms derivedHF_adj_elim
 #print axioms derivedTwo_elimination
+#print axioms derivedTwo_card
+#print axioms freeDistinctionHistory_card
 #print axioms bootstrap_derived
 
 end ActualMathematics.DeltaKernel.Bootstrap
