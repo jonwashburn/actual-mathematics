@@ -101,6 +101,16 @@ theorem hf_observation_iff_code_eq (m n : Nat) :
     (∀ i, Mem i m ↔ Mem i n) ↔ m = n :=
   (ext_iff m n).symm
 
+/-- Nontrivial AST+Ext probe: the singleton of the empty code is distinct
+from the empty code.  Its δ certificate uses no classical posit. -/
+def astSeparationProbe : Deriv :=
+  Deriv.succNeZero DTerm.zero
+
+theorem ast_separation_probe_forced :
+    check [] astSeparationProbe =
+      some (.neg (.eq (.succ .zero) .zero), .empty) :=
+  rfl
+
 /-! ## Converse endpoint embeddings -/
 
 theorem hf_sets_realize_delta :
@@ -116,6 +126,8 @@ def BootstrapFoundationSpec : Prop :=
   Nonempty HAFragment ∧
   HFModelDefinableInDelta ∧
   (∀ m n : Nat, (∀ i, Mem i m ↔ Mem i n) ↔ m = n) ∧
+  check [] astSeparationProbe =
+    some (.neg (.eq (.succ .zero) .zero), .empty) ∧
   Nonempty (PRCEmbeddingInto SetTheoryParse.hfSystem) ∧
   Nonempty (PRCEmbeddingInto TypeTheoryParse.ttSystem)
 
@@ -123,11 +135,13 @@ theorem bootstrap_foundation : BootstrapFoundationSpec :=
   ⟨ha_fragment_holds,
    hf_model_definable_in_delta,
    hf_observation_iff_code_eq,
+   ast_separation_probe_forced,
    hf_sets_realize_delta,
    mltt_two_realize_delta⟩
 
 #print axioms hf_satisfies_ASTExt
 #print axioms hf_model_definable_in_delta
+#print axioms ast_separation_probe_forced
 #print axioms bootstrap_foundation
 
 end ActualMathematics.DeltaKernel.Bootstrap
