@@ -60,6 +60,52 @@ def formulaClass : DFormula → OntologyClass
 posit rules.  None is an object constructor. -/
 def derivClass (_ : Deriv) : OntologyClass := .proof
 
+/-- Independent, explicit inventory of the licensed term constructors.  Unlike
+the classifier below, this proposition itself freezes the constructor shapes. -/
+def TermConstructorInventory : Prop :=
+  ∀ t : DTerm,
+    (∃ n, t = .var n) ∨
+    t = .zero ∨
+    (∃ u, t = .succ u) ∨
+    (∃ u v, t = .add u v) ∨
+    (∃ u v, t = .mul u v)
+
+theorem term_constructor_inventory : TermConstructorInventory := by
+  intro t
+  cases t with
+  | var n => exact Or.inl ⟨n, rfl⟩
+  | zero => exact Or.inr (Or.inl rfl)
+  | succ u => exact Or.inr (Or.inr (Or.inl ⟨u, rfl⟩))
+  | add u v => exact Or.inr (Or.inr (Or.inr (Or.inl ⟨u, v, rfl⟩)))
+  | mul u v => exact Or.inr (Or.inr (Or.inr (Or.inr ⟨u, v, rfl⟩)))
+
+/-- Independent, explicit inventory of the licensed formula constructors. -/
+def FormulaConstructorInventory : Prop :=
+  ∀ φ : DFormula,
+    (∃ t u, φ = .eq t u) ∨
+    φ = .fls ∨
+    (∃ a b, φ = .conj a b) ∨
+    (∃ a b, φ = .disj a b) ∨
+    (∃ a b, φ = .impl a b) ∨
+    (∃ a, φ = .all a) ∨
+    (∃ a, φ = .ex a)
+
+theorem formula_constructor_inventory : FormulaConstructorInventory := by
+  intro φ
+  cases φ with
+  | eq t u => exact Or.inl ⟨t, u, rfl⟩
+  | fls => exact Or.inr (Or.inl rfl)
+  | conj a b => exact Or.inr (Or.inr (Or.inl ⟨a, b, rfl⟩))
+  | disj a b =>
+      exact Or.inr (Or.inr (Or.inr (Or.inl ⟨a, b, rfl⟩)))
+  | impl a b =>
+      exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inl ⟨a, b, rfl⟩))))
+  | all a =>
+      exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl ⟨a, rfl⟩)))))
+  | ex a =>
+      exact Or.inr
+        (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr ⟨a, rfl⟩)))))
+
 theorem term_has_no_set_or_type_primitive (t : DTerm) :
     termClass t ≠ .set ∧ termClass t ≠ .type := by
   cases t <;> simp [termClass]
@@ -76,12 +122,16 @@ theorem deriv_has_no_set_or_type_primitive (d : Deriv) :
 constructor inventory, not a claim that the inventory exists without a
 metatheory. -/
 def ObjectPrimitiveAudit : Prop :=
+  TermConstructorInventory ∧
+  FormulaConstructorInventory ∧
   (∀ t : DTerm, termClass t ≠ .set ∧ termClass t ≠ .type) ∧
   (∀ φ : DFormula, formulaClass φ ≠ .set ∧ formulaClass φ ≠ .type) ∧
   (∀ d : Deriv, derivClass d ≠ .set ∧ derivClass d ≠ .type)
 
 theorem object_primitive_audit : ObjectPrimitiveAudit :=
-  ⟨term_has_no_set_or_type_primitive,
+  ⟨term_constructor_inventory,
+   formula_constructor_inventory,
+   term_has_no_set_or_type_primitive,
    formula_has_no_set_or_type_primitive,
    deriv_has_no_set_or_type_primitive⟩
 
@@ -212,6 +262,8 @@ theorem bootstrap_initiality : BootstrapInitialitySpec :=
   ⟨object_primitive_audit, term_syntax_initial, checker_nonvacuous⟩
 
 #print axioms object_primitive_audit
+#print axioms term_constructor_inventory
+#print axioms formula_constructor_inventory
 #print axioms term_syntax_initial
 #print axioms checker_nonvacuous
 #print axioms bootstrap_initiality
