@@ -81,11 +81,13 @@ theorem forced (T : ForcedTheorem) :
 
 end ForcedTheorem
 
-/-- A forced theorem paired with the explicit δ construction over which it is
-being asserted. The first concrete theorem uses `generatedNatObject`; later
-languages must supply their own typed semantics. -/
+/-- A forced arithmetic theorem paired with the exact base construction
+interpreted by `DFormula`. The equality makes the construction receipt
+load-bearing rather than decorative. Later tower stages need their own sentence
+languages and semantics before they can inhabit an analogous structure. -/
 structure GeneratedTheorem : Type 1 where
   generated : GeneratedObject
+  generated_is_nat : generated = generatedNatObject
   certificate : ForcedTheorem
 
 /-- An externally specified empirical evidence interface for models of an

@@ -149,6 +149,7 @@ theorem exists_physicality_transport
 /-- The real kernel certificate used as the regression witness. -/
 def addCommGenerated : GeneratedTheorem where
   generated := generatedNatObject
+  generated_is_nat := rfl
   certificate :=
     { derivation := GodelTest.addComm
       sentence := .all (.all GodelTest.commFormula)
