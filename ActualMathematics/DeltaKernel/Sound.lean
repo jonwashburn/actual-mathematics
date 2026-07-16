@@ -671,6 +671,37 @@ theorem sound_forced {d : Deriv} {φ : DFormula} (h : Forced [] d φ) :
   intro ψ hψ
   cases hψ
 
+/-- A ledger that posts no omniscience principle gates nothing, whatever its
+induction TIER: `isForced` reads only `em`/`lpo`/`mp`, so an `isForced` ledger
+with `indFull = true` still discharges `Gated` vacuously. This is the semantic
+counterpart of `Ledger.ofIndFull_isForced`. -/
+theorem Gated.of_isForced {O : Ledger} (h : O.isForced = true) : Gated O := by
+  cases O with
+  | mk em lpo mp indFull =>
+    simp only [Ledger.isForced, Bool.and_eq_true, Bool.not_eq_true'] at h
+    refine ⟨fun hh => ?_, fun hh => ?_, fun hh => ?_⟩ <;>
+      simp_all
+
+/-- FORCED-VERDICT soundness: a derivation the kernel accepts with an
+`isForced` ledger (no EM/LPO/MP posited, induction TIER unrestricted) is true
+in the canonical model, with none of the three metatheoretic principles.
+Unlike `sound_forced`, this does not pin `indFull = false`, so it accepts every
+full-induction (quantified-formula) proof.
+
+The forced fragment characterized by `isForced` is Heyting Arithmetic:
+intuitionistic predicate logic, the Peano axioms, and full induction. The
+posits EM/LPO/MP are the classical or omniscience extensions beyond HA.
+Pinning `indFull = false` would reject HA proofs that induct on a quantified
+formula. This theorem is choice-free (`Gated.of_isForced` discharges the gate
+vacuously), so `#print axioms` matches `sound_forced`. -/
+theorem sound_isForced {d : Deriv} {φ : DFormula} {O : Ledger}
+    (h : check [] d = some (φ, O)) (hf : O.isForced = true) :
+    ∀ ρ : Env, DFormula.sat ρ φ := by
+  intro ρ
+  refine sound_cond d [] φ O h (Gated.of_isForced hf) ρ ?_
+  intro ψ hψ
+  cases hψ
+
 /-- CLASSICAL soundness: ANY accepted derivation is true, supplying the three
 principles from the ambient classical metatheory. This is the "run the kernel
 over classical metatheory" reading, and it is the ONE place `Classical.choice`
@@ -689,6 +720,8 @@ theorem sound_classical {Γ : Ctx} {d : Deriv} {φ : DFormula} {O : Ledger}
 `Classical.choice`). This IS the kernel's forcing-spectrum verdict applied to
 its own soundness: the FORCED fragment is certified without omniscience. -/
 #print axioms sound_forced
+
+#print axioms sound_isForced
 
 #print axioms sound_cond
 
