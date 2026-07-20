@@ -43,6 +43,7 @@ import ActualMathematics.DeltaKernel.Check
 import ActualMathematics.DeltaKernel.Examples
 import ActualMathematics.DeltaKernel.GodelTest
 import ActualMathematics.DeltaKernel.Ledger
+import ActualMathematics.DeltaKernel.RecognitionQuotients
 import ActualMathematics.DeltaKernel.Semantics
 import ActualMathematics.DeltaKernel.Sigma
 import ActualMathematics.DeltaKernel.Sound
