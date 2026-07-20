@@ -196,6 +196,23 @@ closed form `(1 + √5)/2` and prove exactly those facts from Mathlib alone. Thi
 demarcation library self-contained; the forcing derivation of φ lives in the parent
 library, not here.
 
+### Countable carrier demarcation, syntactic corpus, and carrier audit
+
+Also included from the parent Primitive Recognition Calculus tree:
+
+- **Countable carrier demarcation.** The least exp/log-closed subfield of ℝ on seeds
+  `{φ, π, √2}`, with countability, minimality, and order-incompleteness, plus a
+  self-contained closed-form audit for native constants (`ℏ`, `E_coh`, `G`, `κ`, dark-energy
+  θ). The full physics-value audit (alpha band, mass law, GapDerivation exponent, Skeleton
+  registry) remains in the parent
+  `IndisputableMonolith.Foundation.PrimitiveRecognitionCalculus.CountableCarrierDemarcation`
+  and `PhysicsCarrierAudit` modules.
+- **Syntactic corpus.** Deep-embedded Q / ZF / STLC / HOL parses into the `FormalSystem`
+  interface, with the four-foundation package in `PRCSyntacticFoundations`.
+- **Carrier audit vocabulary.** Typed chapter/kind/honesty/continuum/verdict tags, negative
+  controls, closed-form seed receipts, and `ExtractionCarrierAudit` (distinct from the parent
+  `FullPhysicsCarrierAudit`).
+
 ## Papers
 
 - J. Washburn, M. Zlatanović, *The δ Bootstrap: Machine-Verified Forced Arithmetic
